@@ -8,13 +8,13 @@ data class ServiceState(
     val name get() = serviceInfo.name.substringAfterLast(":").substringBefore("/")
 
     enum class ServiceStatus {
-        Active,
         Found,
-        Error,
-        Stopper,
         RegistrationFailed,
         UnregistrationFailed,
         Registered,
+        Unregistered,
+        Resolved,
+        ResolveFailed,
     }
 
 }

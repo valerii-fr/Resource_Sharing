@@ -5,6 +5,7 @@ import android.util.Log
 import dev.nordix.discovery.domain.DiscoveryService
 import dev.nordix.core.Constants
 import dev.nordix.discovery.listeners.DiscoveryListener
+import dev.nordix.service_manager.domain.model.FoundServiceInfo
 import dev.nordix.service_manager.domain.model.ServiceInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,8 +27,12 @@ class DiscoveryServiceImpl @Inject constructor(
         Log.i(tag, "Discovery Service was initialized")
     }
 
-    override val foundServices: StateFlow<List<ServiceInfo>> =
-        discoveryListener.foundDevices.map { it.remoteServiceStates.map { it.serviceInfo } }
+    override val foundServices: StateFlow<List<FoundServiceInfo>> =
+        discoveryListener.foundDevices.map { it.foundServiceStates.map { it.serviceInfo } }
+            .stateIn(scope, SharingStarted.Eagerly, emptyList())
+
+    override val resolvedServices: StateFlow<List<ServiceInfo>> =
+        discoveryListener.foundDevices.map { it.resolvedServiceStates.map { it.serviceInfo } }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override fun startRootServiceLookup() {

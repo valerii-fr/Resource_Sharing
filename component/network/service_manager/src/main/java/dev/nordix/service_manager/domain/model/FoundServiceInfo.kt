@@ -1,4 +1,4 @@
-package dev.nordix.common.model
+package dev.nordix.service_manager.domain.model
 
 data class FoundServiceInfo(
     val name: String,

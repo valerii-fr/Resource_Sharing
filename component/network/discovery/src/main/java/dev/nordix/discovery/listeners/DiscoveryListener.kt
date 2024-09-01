@@ -9,6 +9,8 @@ import javax.inject.Inject
 
 class DiscoveryListener @Inject constructor(
     private val servicesStateProvider: ServicesStateProvider,
+    private val nsdManager: NsdManager,
+    private val resolveListener: ResolveListener,
 ) : NsdManager.DiscoveryListener {
 
     val foundDevices: StateFlow<ServicesStateHolder> = servicesStateProvider
@@ -25,8 +27,10 @@ class DiscoveryListener @Inject constructor(
     override fun onDiscoveryStopped(serviceType: String?) =
         servicesStateProvider.onDiscoveryStopped(serviceType)
 
-    override fun onServiceFound(serviceInfo: NsdServiceInfo?) =
+    override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
         servicesStateProvider.onServiceFound(serviceInfo)
+        nsdManager.resolveService(serviceInfo, resolveListener)
+    }
 
     override fun onServiceLost(serviceInfo: NsdServiceInfo?) =
         servicesStateProvider.onServiceLost(serviceInfo)

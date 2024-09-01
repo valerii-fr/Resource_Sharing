@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.nordix.discovery.domain.DiscoveryService
 import dev.nordix.discovery.listeners.DiscoveryListener
+import dev.nordix.discovery.listeners.ResolveListener
 import dev.nordix.discovery.service.DiscoveryServiceImpl
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
 import dev.nordix.service_manager.holder.ServicesStateProvider
@@ -26,16 +27,24 @@ internal class DiscoveryModule {
     @Singleton
     fun provideServicesStateProvider(
         terminalRepository: TerminalRepository,
+        nsdManager: NsdManager,
     ) : ServicesStateProvider = ServicesStateProvider(
         holder = MutableStateFlow(ServicesStateHolder()),
         terminalRepository = terminalRepository,
+        nsdManager = nsdManager,
     )
 
     @Provides
     @Singleton
     fun provideDiscoveryListener(
-        serviceStateProvider: ServicesStateProvider
-    ) : DiscoveryListener = DiscoveryListener(serviceStateProvider)
+        serviceStateProvider: ServicesStateProvider,
+        nsdManager: NsdManager,
+        resolveListener: ResolveListener,
+    ) : DiscoveryListener = DiscoveryListener(
+        servicesStateProvider = serviceStateProvider,
+        nsdManager = nsdManager,
+        resolveListener = resolveListener,
+    )
 
     @Provides
     @Singleton

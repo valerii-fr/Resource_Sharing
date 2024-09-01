@@ -1,8 +1,10 @@
 package dev.nordix.service_manager.holder
 
+import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
+import dev.nordix.service_manager.domain.model.FoundServiceState
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
 import dev.nordix.service_manager.domain.model.mapper.terminalId
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.update
 class ServicesStateProvider(
     val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder()),
     val terminalRepository: TerminalRepository,
+    val nsdManager: NsdManager,
 ) : MutableStateFlow<ServicesStateHolder> by holder {
 
     private val tag = this::class.simpleName
@@ -85,11 +88,11 @@ class ServicesStateProvider(
             Log.e(tag, "serviceName = ${serviceInfo?.serviceName}, terminalId = ${terminalRepository.terminal.id.value}")
         serviceInfo?.let { update { state ->
                 state.copy(
-                    remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
+                    foundServiceStates = state.foundServiceStates.toMutableList().apply {
                         add(
-                            ServiceState(
+                            FoundServiceState(
                                 status = ServiceState.ServiceStatus.Found,
-                                serviceInfo = serviceInfo.toServiceInfo()
+                                serviceInfo = serviceInfo.toFoundServiceInfo()
                             )
                         )
                     }
@@ -108,7 +111,7 @@ class ServicesStateProvider(
                 val domainServiceInfo = serviceInfo.toFoundServiceInfo()
                 update { state ->
                     state.copy(
-                        remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
+                        foundServiceStates = state.foundServiceStates.toMutableList().apply {
                             removeAll { it.serviceInfo == domainServiceInfo }
                         }
                     )
@@ -166,7 +169,7 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
-                                status = ServiceState.ServiceStatus.RegistrationFailed,
+                                status = ServiceState.ServiceStatus.UnregistrationFailed,
                                 serviceInfo = serviceInfo.toServiceInfo()
                             )
                         }
@@ -176,7 +179,7 @@ class ServicesStateProvider(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
                                 ServiceState(
-                                    status = ServiceState.ServiceStatus.RegistrationFailed,
+                                    status = ServiceState.ServiceStatus.UnregistrationFailed,
                                     serviceInfo = serviceInfo.toServiceInfo()
                                 )
                             )
@@ -228,7 +231,7 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
-                                status = ServiceState.ServiceStatus.Registered,
+                                status = ServiceState.ServiceStatus.Unregistered,
                                 serviceInfo = serviceInfo.toServiceInfo()
                             )
                         }
@@ -238,7 +241,7 @@ class ServicesStateProvider(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
                                 ServiceState(
-                                    status = ServiceState.ServiceStatus.Registered,
+                                    status = ServiceState.ServiceStatus.Unregistered,
                                     serviceInfo = serviceInfo.toServiceInfo()
                                 )
                             )
@@ -246,6 +249,39 @@ class ServicesStateProvider(
                     )
                 }
             }
+        }
+    }
+
+    fun onResolveFailed(
+        serviceInfo: NsdServiceInfo?,
+        errorCode: Int
+    ) {
+        Log.e(tag, "onResolveFailed: serviceInfo = $serviceInfo, errorCode = $errorCode")
+        update { state ->
+            val serviceTypeIndex = state.resolvedServiceStates.indexOfFirst { it.serviceInfo.type == serviceInfo?.serviceType }
+            if (serviceTypeIndex > -1) {
+                val newResolveState = state.resolvedServiceStates[serviceTypeIndex]
+                    .copy(status = ServiceState.ServiceStatus.ResolveFailed)
+                state.copy(
+                    resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newResolveState }
+                )
+            } else state
+        }
+    }
+
+    fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
+        Log.e(tag, "onServiceResolved: serviceInfo = $serviceInfo")
+        update { state ->
+            val serviceTypeIndex = state.resolvedServiceStates.indexOfFirst { it.serviceInfo.type == serviceInfo?.serviceType }
+            if (serviceTypeIndex > -1) {
+                val newResolveState = state.resolvedServiceStates[serviceTypeIndex]
+                    .copy(status = ServiceState.ServiceStatus.Resolved)
+                state.copy(
+                    resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newResolveState }
+                )
+            } else state
         }
     }
 
