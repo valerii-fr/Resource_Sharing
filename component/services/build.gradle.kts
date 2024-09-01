@@ -7,6 +7,10 @@ plugins {
 android {
     namespace = "dev.nordix.services"
     compileSdk = 34
+
+    defaultConfig {
+        multiDexEnabled = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -36,6 +40,8 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+
+    implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

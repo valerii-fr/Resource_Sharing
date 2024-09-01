@@ -1,6 +1,6 @@
 [versions]
 agp = "8.4.2"
-kotlin = "2.0.20"
+kotlin = "2.0.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -10,13 +10,15 @@ activityCompose = "1.9.1"
 composeBom = "2024.08.00"
 hilt = "2.51"
 hilt_navigation = "1.2.0"
-ksp = "2.0.20-1.0.24"
+ksp = "2.0.10-1.0.24"
+multidex = "2.0.1"
 permissions = "0.35.2-beta"
 appcompat = "1.7.0"
 material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -5,6 +5,11 @@ plugins {
 }
 
 android {
+
+    defaultConfig {
+        multiDexEnabled = true
+    }
+
     namespace = "dev.nordix.common_ui"
     compileSdk = 34
     compileOptions {
@@ -35,6 +40,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

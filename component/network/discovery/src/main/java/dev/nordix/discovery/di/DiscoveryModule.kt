@@ -49,13 +49,4 @@ internal class DiscoveryModule {
         discoveryListener = discoveryListener,
     )
 
-    @Provides
-    @Singleton
-    @IntoSet
-    fun provideOnAppCreated(
-        discoveryService: DiscoveryService,
-    ) : OnApplicationCreated = OnApplicationCreated {
-        discoveryService.startRootServiceLookup()
-    }
-
 }

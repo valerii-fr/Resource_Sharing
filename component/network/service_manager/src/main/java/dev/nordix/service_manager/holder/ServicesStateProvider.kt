@@ -1,6 +1,7 @@
 package dev.nordix.service_manager.holder
 
 import android.net.nsd.NsdServiceInfo
+import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
@@ -13,7 +14,10 @@ class ServicesStateProvider(
     val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder())
 ) : MutableStateFlow<ServicesStateHolder> by holder {
 
+    private val tag = this::class.simpleName
+
     fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) {
+        Log.e(tag, "onStartDiscoveryFailed: serviceType = $serviceType, errorCode = $errorCode")
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
             if (serviceTypeIndex > -1) {
@@ -28,6 +32,7 @@ class ServicesStateProvider(
     }
 
     fun onStopDiscoveryFailed(serviceType: String?, errorCode: Int) {
+        Log.e(tag, "onStopDiscoveryFailed: serviceType = $serviceType, errorCode = $errorCode")
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
             if (serviceTypeIndex > -1) {
@@ -42,6 +47,7 @@ class ServicesStateProvider(
     }
 
     fun onDiscoveryStarted(serviceType: String?) {
+        Log.e(tag, "onDiscoveryStarted: serviceType = $serviceType")
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
             if (serviceTypeIndex > 1) {
@@ -56,6 +62,7 @@ class ServicesStateProvider(
     }
 
     fun onDiscoveryStopped(serviceType: String?) {
+        Log.e(tag, "onDiscoveryStopped: serviceType = $serviceType")
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
             if (serviceTypeIndex > -1 ) {
@@ -70,6 +77,7 @@ class ServicesStateProvider(
     }
 
     fun onServiceFound(serviceInfo: NsdServiceInfo?) {
+        Log.e(tag, "onServiceFound: serviceInfo = $serviceInfo")
         serviceInfo?.let {
             update { state ->
                 state.copy(
@@ -87,6 +95,7 @@ class ServicesStateProvider(
     }
 
     fun onServiceLost(serviceInfo: NsdServiceInfo?) {
+        Log.e(tag, "onServiceLost: serviceInfo = $serviceInfo")
         serviceInfo?.let {
             val domainServiceInfo = serviceInfo.toFoundServiceInfo()
             update { state ->
