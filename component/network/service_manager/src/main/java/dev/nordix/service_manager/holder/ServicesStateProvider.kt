@@ -111,7 +111,10 @@ class ServicesStateProvider(
                     state.copy(
                         foundServiceStates = state.foundServiceStates.toMutableList().apply {
                             removeAll { it.serviceInfo == domainServiceInfo }
-                        }
+                        },
+                        resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
+                            removeAll { it.serviceInfo.name == domainServiceInfo.name }
+                        },
                     )
                 }
             }
@@ -279,7 +282,18 @@ class ServicesStateProvider(
                     resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                         this[serviceTypeIndex] = newResolveState }
                 )
-            } else state
+            } else {
+                serviceInfo?.let {
+                    state.copy(
+                        resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
+                            add(ServiceState(
+                                status = ServiceState.ServiceStatus.Resolved,
+                                serviceInfo = serviceInfo.toServiceInfo()
+                            ))
+                        }
+                    )
+                } ?: state
+            }
         }
     }
 
