@@ -63,11 +63,14 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":common_ui"))
+
     implementation(project(":component:common"))
     implementation(project(":component:network:discovery"))
     implementation(project(":component:network:service_manager"))
     implementation(project(":component:services"))
     implementation(project(":component:settings"))
+
+    implementation(project(":feature:network_map"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
