@@ -16,48 +16,56 @@ class ServicesStateProvider(
     fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) {
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
-            val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
-                .copy(state = DiscoveryState.State.Error)
-            state.copy(
-                discoveryStates = state.discoveryStates.toMutableList().apply {
-                    this[serviceTypeIndex] = newDiscoveryState }
-            )
+            if (serviceTypeIndex > -1) {
+                val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
+                    .copy(state = DiscoveryState.State.Error)
+                state.copy(
+                    discoveryStates = state.discoveryStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newDiscoveryState }
+                )
+            } else state
         }
     }
 
     fun onStopDiscoveryFailed(serviceType: String?, errorCode: Int) {
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
-            val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
-                .copy(state = DiscoveryState.State.Error)
-            state.copy(
-                discoveryStates = state.discoveryStates.toMutableList().apply {
-                    this[serviceTypeIndex] = newDiscoveryState }
-            )
+            if (serviceTypeIndex > -1) {
+                val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
+                    .copy(state = DiscoveryState.State.Error)
+                state.copy(
+                    discoveryStates = state.discoveryStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newDiscoveryState }
+                )
+            } else state
         }
     }
 
     fun onDiscoveryStarted(serviceType: String?) {
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
-            val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
-                .copy(state = DiscoveryState.State.Active)
-            state.copy(
-                discoveryStates = state.discoveryStates.toMutableList().apply {
-                    this[serviceTypeIndex] = newDiscoveryState }
-            )
+            if (serviceTypeIndex > 1) {
+                val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
+                    .copy(state = DiscoveryState.State.Active)
+                state.copy(
+                    discoveryStates = state.discoveryStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newDiscoveryState }
+                )
+            } else state
         }
     }
 
     fun onDiscoveryStopped(serviceType: String?) {
         update { state ->
             val serviceTypeIndex = state.discoveryStates.indexOfFirst { it.type == serviceType }
-            val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
-                .copy(state = DiscoveryState.State.Stopped)
-            state.copy(
-                discoveryStates = state.discoveryStates.toMutableList().apply {
-                    this[serviceTypeIndex] = newDiscoveryState }
-            )
+            if (serviceTypeIndex > -1 ) {
+                val newDiscoveryState = state.discoveryStates[serviceTypeIndex]
+                    .copy(state = DiscoveryState.State.Stopped)
+                state.copy(
+                    discoveryStates = state.discoveryStates.toMutableList().apply {
+                        this[serviceTypeIndex] = newDiscoveryState }
+                )
+            } else state
         }
     }
 
