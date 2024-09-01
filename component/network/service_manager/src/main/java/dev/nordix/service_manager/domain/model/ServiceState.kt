@@ -5,7 +5,7 @@ data class ServiceState(
     val serviceInfo: ServiceInfo,
 ) {
 
-    val name get() = serviceInfo.name.substringAfterLast(":").substringBefore("/")
+    val name get() = serviceInfo.name.substringAfter("/")
 
     enum class ServiceStatus {
         Found,

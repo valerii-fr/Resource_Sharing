@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.nordix.service_manager.domain.model.FoundServiceState
+import dev.nordix.service_manager.domain.model.LocalServiceState
 import dev.nordix.service_manager.domain.model.ServiceState
 
 @Composable
@@ -28,7 +29,7 @@ fun ServicesList(
     ) {
         items(
             items = services,
-            key = { it.name }
+            key = { it.hashCode() }
         ) { item ->
             ServiceItem(state = item)
         }
@@ -54,7 +55,33 @@ fun ServicesList(
     ) {
         items(
             items = services,
-            key = { it.name }
+            key = { it.hashCode() }
+        ) { item ->
+            ServiceItem(state = item)
+        }
+    }
+
+}
+
+
+@Composable
+@JvmName("LocalServicesList")
+fun ServicesList(
+    modifier: Modifier = Modifier,
+    services: List<LocalServiceState>,
+) {
+
+    val listState = rememberLazyListState()
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        state = listState,
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        items(
+            items = services,
+            key = { it.hashCode() }
         ) { item ->
             ServiceItem(state = item)
         }

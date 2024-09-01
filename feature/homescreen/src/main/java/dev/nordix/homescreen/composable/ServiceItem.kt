@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.nordix.service_manager.domain.model.FoundServiceState
+import dev.nordix.service_manager.domain.model.LocalServiceState
 import dev.nordix.service_manager.domain.model.ServiceState
 
 @Composable
@@ -39,6 +40,7 @@ fun ServiceItem(
                 Text(text = state.status.name, style = MaterialTheme.typography.bodySmall)
             }
             Text(text = state.serviceInfo.type, style = MaterialTheme.typography.bodySmall)
+            Text(text = state.serviceInfo.deviceId, style = MaterialTheme.typography.bodySmall)
             Text(text = state.serviceInfo.port.toString(), style = MaterialTheme.typography.bodySmall)
             Text(text = state.serviceInfo.address.toString(), style = MaterialTheme.typography.bodySmall)
         }
@@ -49,6 +51,32 @@ fun ServiceItem(
 fun ServiceItem(
     modifier: Modifier = Modifier,
     state: FoundServiceState,
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp).fillMaxWidth()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = state.name, style = MaterialTheme.typography.bodySmall)
+                Text(text = state.status.name, style = MaterialTheme.typography.bodySmall)
+            }
+            Text(text = state.serviceInfo.type, style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+fun ServiceItem(
+    modifier: Modifier = Modifier,
+    state: LocalServiceState,
 ) {
     Card(
         modifier = modifier,

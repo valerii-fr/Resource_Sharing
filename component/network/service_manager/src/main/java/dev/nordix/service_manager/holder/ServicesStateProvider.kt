@@ -4,10 +4,12 @@ import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
 import dev.nordix.service_manager.domain.model.FoundServiceState
+import dev.nordix.service_manager.domain.model.LocalServiceState
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
 import dev.nordix.service_manager.domain.model.mapper.terminalId
 import dev.nordix.service_manager.domain.model.mapper.toFoundServiceInfo
+import dev.nordix.service_manager.domain.model.mapper.toLocalServiceInfo
 import dev.nordix.service_manager.domain.model.mapper.toServiceInfo
 import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,13 +133,13 @@ class ServicesStateProvider(
         serviceInfo?.let {
             update { state ->
                 val serviceIndex = state.localServiceStates
-                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toLocalServiceInfo() }
                 if (serviceIndex != -1) {
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
                                 status = ServiceState.ServiceStatus.RegistrationFailed,
-                                serviceInfo = serviceInfo.toServiceInfo()
+                                serviceInfo = serviceInfo.toLocalServiceInfo()
                             )
                         }
                     )
@@ -145,9 +147,9 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
-                                ServiceState(
+                                LocalServiceState(
                                     status = ServiceState.ServiceStatus.RegistrationFailed,
-                                    serviceInfo = serviceInfo.toServiceInfo()
+                                    serviceInfo = serviceInfo.toLocalServiceInfo()
                                 )
                             )
                         }
@@ -171,7 +173,7 @@ class ServicesStateProvider(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
                                 status = ServiceState.ServiceStatus.UnregistrationFailed,
-                                serviceInfo = serviceInfo.toServiceInfo()
+                                serviceInfo = serviceInfo.toLocalServiceInfo()
                             )
                         }
                     )
@@ -179,9 +181,9 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
-                                ServiceState(
+                                LocalServiceState(
                                     status = ServiceState.ServiceStatus.UnregistrationFailed,
-                                    serviceInfo = serviceInfo.toServiceInfo()
+                                    serviceInfo = serviceInfo.toLocalServiceInfo()
                                 )
                             )
                         }
@@ -196,13 +198,13 @@ class ServicesStateProvider(
         serviceInfo?.let {
             update { state ->
                 val serviceIndex = state.localServiceStates
-                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toLocalServiceInfo() }
                 if (serviceIndex != -1) {
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
                                 status = ServiceState.ServiceStatus.Registered,
-                                serviceInfo = serviceInfo.toServiceInfo()
+                                serviceInfo = serviceInfo.toLocalServiceInfo()
                             )
                         }
                     )
@@ -210,9 +212,9 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
-                                ServiceState(
+                                LocalServiceState(
                                     status = ServiceState.ServiceStatus.Registered,
-                                    serviceInfo = serviceInfo.toServiceInfo()
+                                    serviceInfo = serviceInfo.toLocalServiceInfo()
                                 )
                             )
                         }
@@ -227,13 +229,13 @@ class ServicesStateProvider(
         serviceInfo?.let {
             update { state ->
                 val serviceIndex = state.localServiceStates
-                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toLocalServiceInfo() }
                 if (serviceIndex != -1) {
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             this[serviceIndex].copy(
                                 status = ServiceState.ServiceStatus.Unregistered,
-                                serviceInfo = serviceInfo.toServiceInfo()
+                                serviceInfo = serviceInfo.toLocalServiceInfo()
                             )
                         }
                     )
@@ -241,9 +243,9 @@ class ServicesStateProvider(
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {
                             add(
-                                ServiceState(
+                                LocalServiceState(
                                     status = ServiceState.ServiceStatus.Unregistered,
-                                    serviceInfo = serviceInfo.toServiceInfo()
+                                    serviceInfo = serviceInfo.toLocalServiceInfo()
                                 )
                             )
                         }

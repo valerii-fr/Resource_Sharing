@@ -1,8 +1,8 @@
 package dev.nordix.core.model
 
 import dev.nordix.core.Constants
+import dev.nordix.core.utils.randomString
 import java.io.Serializable
-import java.util.UUID
 import kotlin.jvm.JvmInline
 
 data class Terminal(
@@ -11,10 +11,10 @@ data class Terminal(
 ) {
 
     @JvmInline
-    value class ID(val value: UUID) : Serializable {
+    value class ID(val value: String) : Serializable {
         fun toRootServiceName() : String = "$value/${Constants.ROOT_SERVICE_NAME}"
         companion object {
-            fun new() = ID(UUID.randomUUID())
+            fun new() = ID(randomString(8))
         }
     }
 
