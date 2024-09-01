@@ -5,13 +5,16 @@ import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
+import dev.nordix.service_manager.domain.model.mapper.terminalId
 import dev.nordix.service_manager.domain.model.mapper.toFoundServiceInfo
 import dev.nordix.service_manager.domain.model.mapper.toServiceInfo
+import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 class ServicesStateProvider(
-    val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder())
+    val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder()),
+    val terminalRepository: TerminalRepository,
 ) : MutableStateFlow<ServicesStateHolder> by holder {
 
     private val tag = this::class.simpleName
@@ -78,8 +81,9 @@ class ServicesStateProvider(
 
     fun onServiceFound(serviceInfo: NsdServiceInfo?) {
         Log.e(tag, "onServiceFound: serviceInfo = $serviceInfo")
-        serviceInfo?.let {
-            update { state ->
+        if (serviceInfo?.terminalId != terminalRepository.terminal.id.value.toString()) {
+            Log.e(tag, "serviceName = ${serviceInfo?.serviceName}, terminalId = ${terminalRepository.terminal.id.value}")
+        serviceInfo?.let { update { state ->
                 state.copy(
                     remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
                         add(
@@ -90,21 +94,28 @@ class ServicesStateProvider(
                         )
                     }
                 )
-            }
+            } }
+        } else {
+            Log.i(tag, "it is my own service")
         }
     }
 
     fun onServiceLost(serviceInfo: NsdServiceInfo?) {
         Log.e(tag, "onServiceLost: serviceInfo = $serviceInfo")
-        serviceInfo?.let {
-            val domainServiceInfo = serviceInfo.toFoundServiceInfo()
-            update { state ->
-                state.copy(
-                    remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
-                        removeAll { it.serviceInfo == domainServiceInfo }
-                    }
-                )
+
+        if (serviceInfo?.terminalId != terminalRepository.terminal.id.value.toString()) {
+            serviceInfo?.let {
+                val domainServiceInfo = serviceInfo.toFoundServiceInfo()
+                update { state ->
+                    state.copy(
+                        remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
+                            removeAll { it.serviceInfo == domainServiceInfo }
+                        }
+                    )
+                }
             }
+        } else {
+            Log.i(tag, "it is my own service")
         }
     }
 

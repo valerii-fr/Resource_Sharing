@@ -32,7 +32,7 @@ class DiscoveryServiceImpl @Inject constructor(
 
     override fun startRootServiceLookup() {
         nsdManager.discoverServices(
-            Constants.ROOT_DISCOVERY_TYPE,
+            Constants.ROOT_SERVICE_TYPE,
             NsdManager.PROTOCOL_DNS_SD,
             discoveryListener
         )

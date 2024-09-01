@@ -6,11 +6,9 @@ import javax.inject.Inject
 
 class TerminalRepositoryImpl @Inject constructor() : TerminalRepository {
 
-    override fun getTerminal(): Terminal {
-        return Terminal(
-            id = Terminal.ID.new(),
-            name = "default terminal"
-        )
-    }
+    override val terminal = Terminal(
+        id = Terminal.ID.new(),
+        name = "default terminal"
+    )
 
 }

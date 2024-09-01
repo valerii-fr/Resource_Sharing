@@ -4,6 +4,6 @@ import dev.nordix.core.model.Terminal
 
 interface TerminalRepository {
 
-    fun getTerminal() : Terminal
+    val terminal : Terminal
 
 }
