@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/component/settings" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/homescreen" />
             <option value="$PROJECT_DIR$/feature/network_map" />
           </set>
         </option>

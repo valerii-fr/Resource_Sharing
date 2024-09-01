@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Resource Sharing</string>
+    <string name="my_services">My</string>
+    <string name="found_services">Found</string>
+    <string name="resolved_services">Resolved</string>
+</resources>

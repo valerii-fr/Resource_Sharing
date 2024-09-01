@@ -1,6 +1,5 @@
 package dev.nordix.service_manager.holder
 
-import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
@@ -16,8 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class ServicesStateProvider(
     val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder()),
-    val terminalRepository: TerminalRepository,
-    val nsdManager: NsdManager,
+    private val terminalRepository: TerminalRepository,
 ) : MutableStateFlow<ServicesStateHolder> by holder {
 
     private val tag = this::class.simpleName

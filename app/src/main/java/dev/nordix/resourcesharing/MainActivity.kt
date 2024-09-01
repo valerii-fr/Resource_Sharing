@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import dev.nordix.homescreen.composable.HomeScreen
 import dev.nordix.publish.ServicePublisher
 import dev.nordix.resourcesharing.ui.theme.ResourceSharingTheme
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ResourceSharingTheme {
-
+                HomeScreen()
             }
         }
     }
