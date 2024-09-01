@@ -66,6 +66,7 @@ dependencies {
 
     implementation(project(":component:common"))
     implementation(project(":component:network:discovery"))
+    implementation(project(":component:network:publish"))
     implementation(project(":component:network:service_manager"))
     implementation(project(":component:services"))
     implementation(project(":component:settings"))

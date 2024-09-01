@@ -12,6 +12,9 @@ data class ServiceState(
         Found,
         Error,
         Stopper,
+        RegistrationFailed,
+        UnregistrationFailed,
+        Registered,
     }
 
 }

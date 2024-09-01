@@ -5,8 +5,8 @@ import android.util.Log
 import dev.nordix.service_manager.domain.model.DiscoveryState
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.ServicesStateHolder
-import dev.nordix.service_manager.domain.model.toFoundServiceInfo
-import dev.nordix.service_manager.domain.model.toServiceInfo
+import dev.nordix.service_manager.domain.model.mapper.toFoundServiceInfo
+import dev.nordix.service_manager.domain.model.mapper.toServiceInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -81,7 +81,7 @@ class ServicesStateProvider(
         serviceInfo?.let {
             update { state ->
                 state.copy(
-                    serviceStates = state.serviceStates.toMutableList().apply {
+                    remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
                         add(
                             ServiceState(
                                 status = ServiceState.ServiceStatus.Found,
@@ -100,10 +100,140 @@ class ServicesStateProvider(
             val domainServiceInfo = serviceInfo.toFoundServiceInfo()
             update { state ->
                 state.copy(
-                    serviceStates = state.serviceStates.toMutableList().apply {
+                    remoteServiceStates = state.remoteServiceStates.toMutableList().apply {
                         removeAll { it.serviceInfo == domainServiceInfo }
                     }
                 )
+            }
+        }
+    }
+
+    fun onRegistrationFailed(
+        serviceInfo: NsdServiceInfo?,
+        errorCode: Int
+    ) {
+        Log.e(tag, "onRegistrationFailed: serviceInfo = $serviceInfo, errorCode = $errorCode")
+        serviceInfo?.let {
+            update { state ->
+                val serviceIndex = state.localServiceStates
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                if (serviceIndex != -1) {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            this[serviceIndex].copy(
+                                status = ServiceState.ServiceStatus.RegistrationFailed,
+                                serviceInfo = serviceInfo.toServiceInfo()
+                            )
+                        }
+                    )
+                } else {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            add(
+                                ServiceState(
+                                    status = ServiceState.ServiceStatus.RegistrationFailed,
+                                    serviceInfo = serviceInfo.toServiceInfo()
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    fun onUnregistrationFailed(
+        serviceInfo: NsdServiceInfo?,
+        errorCode: Int
+    ) {
+        Log.e(tag, "onUnregistrationFailed: serviceInfo = $serviceInfo, errorCode = $errorCode")
+        serviceInfo?.let {
+            update { state ->
+                val serviceIndex = state.localServiceStates
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                if (serviceIndex != -1) {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            this[serviceIndex].copy(
+                                status = ServiceState.ServiceStatus.RegistrationFailed,
+                                serviceInfo = serviceInfo.toServiceInfo()
+                            )
+                        }
+                    )
+                } else {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            add(
+                                ServiceState(
+                                    status = ServiceState.ServiceStatus.RegistrationFailed,
+                                    serviceInfo = serviceInfo.toServiceInfo()
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    fun onServiceRegistered(serviceInfo: NsdServiceInfo?) {
+        Log.e(tag, "onServiceRegistered: serviceInfo = $serviceInfo")
+        serviceInfo?.let {
+            update { state ->
+                val serviceIndex = state.localServiceStates
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                if (serviceIndex != -1) {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            this[serviceIndex].copy(
+                                status = ServiceState.ServiceStatus.Registered,
+                                serviceInfo = serviceInfo.toServiceInfo()
+                            )
+                        }
+                    )
+                } else {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            add(
+                                ServiceState(
+                                    status = ServiceState.ServiceStatus.Registered,
+                                    serviceInfo = serviceInfo.toServiceInfo()
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    fun onServiceUnregistered(serviceInfo: NsdServiceInfo?) {
+        Log.e(tag, "onServiceUnregistered: serviceInfo = $serviceInfo")
+        serviceInfo?.let {
+            update { state ->
+                val serviceIndex = state.localServiceStates
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                if (serviceIndex != -1) {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            this[serviceIndex].copy(
+                                status = ServiceState.ServiceStatus.Registered,
+                                serviceInfo = serviceInfo.toServiceInfo()
+                            )
+                        }
+                    )
+                } else {
+                    state.copy(
+                        localServiceStates = state.localServiceStates.toMutableList().apply {
+                            add(
+                                ServiceState(
+                                    status = ServiceState.ServiceStatus.Registered,
+                                    serviceInfo = serviceInfo.toServiceInfo()
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }

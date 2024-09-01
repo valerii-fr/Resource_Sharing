@@ -21,12 +21,6 @@ internal class DiscoveryModule {
 
     @Provides
     @Singleton
-    fun provideNsdManager(
-        @ApplicationContext context: Context,
-    ) : NsdManager = ContextCompat.getSystemService(context, NsdManager::class.java) as NsdManager
-
-    @Provides
-    @Singleton
     fun provideServicesStateProvider() : ServicesStateProvider = ServicesStateProvider()
 
     @Provides

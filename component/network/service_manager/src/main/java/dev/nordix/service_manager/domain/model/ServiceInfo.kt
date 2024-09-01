@@ -7,5 +7,5 @@ data class ServiceInfo(
     val deviceId: String,
     val type: String,
     val port: Int,
-    val address: InetAddress,
+    val address: InetAddress?,
 )

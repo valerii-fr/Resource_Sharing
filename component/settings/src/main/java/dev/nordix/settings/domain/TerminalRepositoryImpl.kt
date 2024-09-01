@@ -8,7 +8,8 @@ class TerminalRepositoryImpl @Inject constructor() : TerminalRepository {
 
     override fun getTerminal(): Terminal {
         return Terminal(
-            id = Terminal.ID.new()
+            id = Terminal.ID.new(),
+            name = "default terminal"
         )
     }
 
