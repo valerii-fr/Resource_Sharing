@@ -16,7 +16,7 @@ class ServicePublisherImpl @Inject constructor(
 
     override fun publishRootService() {
         val serviceInfo = NsdServiceInfo().apply {
-            port = 31337
+            port = Constants.ROOT_SERVICE_PORT
             serviceName = Constants.ROOT_SERVICE_NAME
             serviceType = terminalRepository.getTerminal().id.toRootServiceType()
         }
