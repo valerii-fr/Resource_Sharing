@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
@@ -11,9 +13,12 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/common_ui" />
             <option value="$PROJECT_DIR$/component" />
+            <option value="$PROJECT_DIR$/component/common" />
             <option value="$PROJECT_DIR$/component/network" />
             <option value="$PROJECT_DIR$/component/network/discovery" />
-            <option value="$PROJECT_DIR$/component/network/presentation" />
+            <option value="$PROJECT_DIR$/component/network/service_manager" />
+            <option value="$PROJECT_DIR$/component/services" />
+            <option value="$PROJECT_DIR$/component/settings" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/network_map" />

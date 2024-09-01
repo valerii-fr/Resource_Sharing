@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.nordix.discovery"
+    namespace = "dev.nordix.service_manager"
     compileSdk = 34
 
     defaultConfig {
@@ -26,6 +26,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -47,9 +48,9 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)
     implementation(project(":component:settings"))
-    implementation(project(":component:network:service_manager"))
     ksp(libs.hilt.compiler)
 }

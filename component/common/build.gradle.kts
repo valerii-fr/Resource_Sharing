@@ -6,11 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "dev.nordix.discovery"
+    namespace = "dev.nordix.common"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -42,14 +44,11 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":component:services"))
-    implementation(project(":component:common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
 
     implementation(libs.hilt.android)
     implementation(project(":component:settings"))
-    implementation(project(":component:network:service_manager"))
     ksp(libs.hilt.compiler)
 }
