@@ -9,7 +9,7 @@ import dagger.multibindings.IntoSet
 import dev.nordix.core.annotations.OnApplicationCreated
 import dev.nordix.publish.ServicePublisher
 import dev.nordix.publish.domain.ServicePublisherImpl
-import dev.nordix.publish.listeners.PublishingListener
+import dev.nordix.service_manager.holder.ServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Singleton
 
@@ -22,11 +22,11 @@ class PublisherModule {
     fun provideServicePublisher(
         nsdManager: NsdManager,
         terminalRepository: TerminalRepository,
-        publishingListener: PublishingListener,
+        servicesStateProvider: ServicesStateProvider,
     ) : ServicePublisher = ServicePublisherImpl(
         nsdManager = nsdManager,
         terminalRepository = terminalRepository,
-        publishingListener = publishingListener
+        servicesStateProvider = servicesStateProvider,
     )
 
     @Provides
