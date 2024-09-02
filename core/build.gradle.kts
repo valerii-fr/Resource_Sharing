@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    kotlin("plugin.serialization") version "1.8.22"
 }
 
 android {
@@ -39,6 +40,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
     implementation(libs.androidx.core.ktx)

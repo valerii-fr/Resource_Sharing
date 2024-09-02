@@ -1,15 +1,28 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.android.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "dev.nordix.services"
+    namespace = "dev.nordix.serviceы"
     compileSdk = 34
 
     defaultConfig {
-        multiDexEnabled = true
+        minSdk = 24
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -18,17 +31,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 
@@ -40,17 +42,17 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":component:common"))
 
-    implementation(libs.androidx.multidex)
-    coreLibraryDesugaring(libs.coreLibraryDesugaring)
+    implementation(libs.bundles.ktor)
+
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.appcompat)
+    coreLibraryDesugaring(libs.coreLibraryDesugaring)
+
+    implementation(libs.hilt.android)
+    implementation(project(":component:settings"))
+    ksp(libs.hilt.compiler)
+    implementation(kotlin("reflect"))
 }

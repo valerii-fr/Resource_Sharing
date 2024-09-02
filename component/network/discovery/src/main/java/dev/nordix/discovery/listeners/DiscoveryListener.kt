@@ -12,8 +12,6 @@ class DiscoveryListener @Inject constructor(
     private val nsdManager: NsdManager,
 ) : NsdManager.DiscoveryListener {
 
-    val foundDevices: StateFlow<ServicesStateHolder> = servicesStateProvider
-
     override fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) =
         servicesStateProvider.onStartDiscoveryFailed(serviceType, errorCode)
 

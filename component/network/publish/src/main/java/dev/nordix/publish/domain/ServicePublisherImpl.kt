@@ -5,8 +5,6 @@ import android.net.nsd.NsdServiceInfo
 import dev.nordix.core.Constants
 import dev.nordix.publish.ServicePublisher
 import dev.nordix.publish.listeners.PublishingListener
-import dev.nordix.service_manager.domain.model.ServiceInfo
-import dev.nordix.service_manager.domain.model.mapper.toNsdService
 import dev.nordix.service_manager.holder.ServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
@@ -17,7 +15,7 @@ class ServicePublisherImpl @Inject constructor(
     private val nsdManager: NsdManager,
 ) : ServicePublisher {
 
-    private val servicesMap = mutableMapOf<String, PublishingListener>()
+    private val registeredListeners = mutableMapOf<String, PublishingListener>()
 
     override fun publishRootService() {
         val serviceInfo = NsdServiceInfo().apply {
@@ -28,17 +26,7 @@ class ServicePublisherImpl @Inject constructor(
         nsdManager.registerService(
             serviceInfo,
             NsdManager.PROTOCOL_DNS_SD,
-            servicesMap.getOrPut(serviceInfo.serviceName) {
-                PublishingListener(servicesStateProvider)
-            }
-        )
-    }
-
-    override fun publishService(service: ServiceInfo) {
-        nsdManager.registerService(
-            service.toNsdService(),
-            NsdManager.PROTOCOL_DNS_SD,
-            servicesMap.getOrPut(service.name) {
+            registeredListeners.getOrPut(serviceInfo.serviceName) {
                 PublishingListener(servicesStateProvider)
             }
         )
@@ -46,13 +34,13 @@ class ServicePublisherImpl @Inject constructor(
 
     override fun removeService(serviceName: String) {
         nsdManager.unregisterService(
-            servicesMap.getOrPut(serviceName) {
+            registeredListeners.getOrPut(serviceName) {
                 PublishingListener(servicesStateProvider)
             })
     }
 
     override fun removeAll() {
-        servicesMap.keys.forEach(::removeService)
+        registeredListeners.keys.forEach(::removeService)
     }
 
 }

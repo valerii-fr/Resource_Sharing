@@ -9,6 +9,7 @@ interface DiscoveryService {
     val foundServices: StateFlow<List<FoundServiceInfo>>
     val resolvedServices: StateFlow<List<ServiceInfo>>
 
-    fun startRootServiceLookup()
+    fun startLookup()
+    fun stopDiscovery()
 
 }

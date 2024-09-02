@@ -31,7 +31,7 @@ fun NsdServiceInfo.toLocalServiceInfo() : LocalServiceInfo =
     )
 
 fun ServiceInfo.toNsdService() : NsdServiceInfo = NsdServiceInfo().apply {
-    port = port
+    port = this@toNsdService.port
     serviceName = "$deviceId/$name"
     serviceType = type
 }

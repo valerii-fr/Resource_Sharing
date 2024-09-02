@@ -17,7 +17,7 @@ class AppModule {
     fun provideOnApplicationCreated(
         discoveryService: DiscoveryService
     ): OnApplicationCreated = OnApplicationCreated {
-        discoveryService.startRootServiceLookup()
+        discoveryService.startLookup()
     }
 
 }

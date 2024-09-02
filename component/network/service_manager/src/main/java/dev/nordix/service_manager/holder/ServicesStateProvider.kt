@@ -167,7 +167,7 @@ class ServicesStateProvider(
         serviceInfo?.let {
             update { state ->
                 val serviceIndex = state.localServiceStates
-                    .indexOfFirst { it.serviceInfo == serviceInfo.toServiceInfo() }
+                    .indexOfFirst { it.serviceInfo == serviceInfo.toLocalServiceInfo() }
                 if (serviceIndex != -1) {
                     state.copy(
                         localServiceStates = state.localServiceStates.toMutableList().apply {

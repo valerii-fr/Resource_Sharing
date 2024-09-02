@@ -1,13 +1,19 @@
 package dev.nordix.services.domain.model
 
-interface ServiceContract {
+import dev.nordix.core.Constants
+import kotlinx.serialization.Serializable
+import kotlin.reflect.KClass
 
-    val type: ServiceType
-    val actions: List<ServiceAction>
+@Serializable
+data class ServiceContract(
+    val type: ServiceType,
+    val actions: List<KClass<*>>
+) {
 
-    enum class ServiceType {
-        DEVICE_PROXY,
-        NETWORK_PROXY,
+    enum class ServiceType(val typeName: String) {
+        DEVICE_PROXY("_nordix_device_proxy${Constants.SERVICE_PROTOCOL}"),
+        NETWORK_PROXY("_nordix_network_proxy${Constants.SERVICE_PROTOCOL}"),
+        SERVICE_PROXY("_nordix_service_proxy${Constants.SERVICE_PROTOCOL}"),
     }
 
 }

@@ -18,24 +18,14 @@ internal class DiscoveryModule {
 
     @Provides
     @Singleton
-    fun provideDiscoveryListener(
-        serviceStateProvider: ServicesStateProvider,
-        nsdManager: NsdManager,
-    ) : DiscoveryListener = DiscoveryListener(
-        servicesStateProvider = serviceStateProvider,
-        nsdManager = nsdManager,
-    )
-
-    @Provides
-    @Singleton
     fun provideDiscoveryService(
         scope: CoroutineScope,
         nsdManager: NsdManager,
-        discoveryListener: DiscoveryListener,
+        servicesStateProvider: ServicesStateProvider,
     ) : DiscoveryService = DiscoveryServiceImpl(
         scope = scope,
         nsdManager = nsdManager,
-        discoveryListener = discoveryListener,
+        servicesStateProvider = servicesStateProvider,
     )
 
 }

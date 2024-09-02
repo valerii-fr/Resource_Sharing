@@ -1,3 +1,5 @@
 package dev.nordix.services.domain.model
 
-interface ServiceActionResult
+import java.io.Serializable
+
+interface ServiceActionResult : Serializable

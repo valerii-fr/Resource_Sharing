@@ -1,5 +1,7 @@
 package dev.nordix.services.domain.model
 
-interface ServiceAction {
-    val result: ServiceActionResult
+interface ServiceAction <out R: ServiceActionResult> {
+
+    val identifier get() = this::class.simpleName
+
 }
