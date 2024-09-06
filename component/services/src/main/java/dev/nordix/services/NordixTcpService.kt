@@ -1,6 +1,6 @@
 package dev.nordix.services
 
-import dev.nordix.services.domain.model.ServiceAction
+import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.ServiceActionResult
 import dev.nordix.services.domain.model.ServiceDescriptor
 

@@ -1,12 +1,13 @@
 package dev.nordix.services.impls.message_service
 
+import android.util.Log
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.WssServerProvider
 import dev.nordix.services.domain.model.ServiceContract
 import dev.nordix.services.domain.model.ServiceDescriptor
 import dev.nordix.services.impls.message_service.accessors.SmsRetrieveAccessor
 import dev.nordix.services.impls.message_service.accessors.SmsSendAccessor
-import dev.nordix.services.impls.message_service.model.MessageAction
+import dev.nordix.services.domain.model.actions.MessageAction
 import dev.nordix.services.impls.message_service.model.MessageActionResult
 import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +45,7 @@ class SmsService @Inject constructor(
     )
 
     override suspend fun act(action: MessageAction<MessageActionResult>): MessageActionResult {
+        Log.i(this::class.simpleName, "Received action $action")
         return action.react()
     }
 

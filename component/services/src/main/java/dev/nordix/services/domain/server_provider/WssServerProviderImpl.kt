@@ -2,12 +2,11 @@ package dev.nordix.services.domain.server_provider
 
 import android.util.Log
 import dev.nordix.services.NordixTcpService
+import dev.nordix.services.domain.ActionSerializer.messageActionJson
 import dev.nordix.services.domain.WssServerProvider
-import dev.nordix.services.domain.model.ServiceAction
+import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.ServiceActionResult
-import dev.nordix.services.impls.message_service.model.MessageAction
-import dev.nordix.services.impls.message_service.model.MessageAction.GetMessages
-import dev.nordix.services.impls.message_service.model.MessageAction.SendMessage
+import dev.nordix.services.domain.model.actions.MessageAction.SendMessage
 import io.ktor.server.application.install
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
@@ -19,11 +18,8 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
-import io.netty.channel.unix.NativeInetAddress.address
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import javax.inject.Inject
 
 class WssServerProviderImpl @Inject constructor() : WssServerProvider {
@@ -43,7 +39,7 @@ class WssServerProviderImpl @Inject constructor() : WssServerProvider {
                 routing {
                     webSocket(path) {
                         try {
-                            val s = messageActionJson.encodeToString(
+                            val s = messageActionJson.encodeToString<ServiceAction<ServiceActionResult>>(
                                 SendMessage(address = "123", body = "Hello World")
                             )
                             send(Frame.Text(s))
@@ -81,24 +77,6 @@ class WssServerProviderImpl @Inject constructor() : WssServerProvider {
             this as NordixTcpService<ServiceActionResult, ServiceAction<ServiceActionResult>>
         } catch (_: Throwable) {
             throw UnsupportedOperationException("Cannot proceed with $this")
-        }
-    }
-
-    companion object {
-
-
-        val messageActionModule = SerializersModule {
-            polymorphic(MessageAction::class) {
-                subclass(SendMessage::class, SendMessage.serializer())
-                subclass(GetMessages::class, GetMessages.serializer())
-            }
-        }
-
-        val messageActionJson = Json {
-            serializersModule = messageActionModule
-            prettyPrint = true
-            encodeDefaults = true
-            classDiscriminator = "type"
         }
     }
 }
