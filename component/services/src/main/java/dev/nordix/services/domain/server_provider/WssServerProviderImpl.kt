@@ -60,7 +60,7 @@ class WssServerProviderImpl @Inject constructor(
             timestamp = Instant.now(),
             serviceAliases = services.mapNotNull { it::class.qualifiedName }
         )
-        send(Frame.Text(actionResultJson.encodeToString<ServicesPresentation>(servicesPresentation)))
+        send(Frame.Text(actionResultJson.encodeToString(servicesPresentation)))
     }
 
     private suspend fun DefaultWebSocketServerSession.observeMessages() {

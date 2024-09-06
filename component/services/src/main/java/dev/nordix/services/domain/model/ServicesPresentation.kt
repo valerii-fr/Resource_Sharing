@@ -1,11 +1,12 @@
 package dev.nordix.services.domain.model
 
-import kotlinx.serialization.Contextual
+import dev.nordix.core.utils.InstantSerializer
 import kotlinx.serialization.Serializable
 import java.time.Instant
 
 @Serializable
 data class ServicesPresentation(
-    @Contextual val timestamp: Instant,
+    @Serializable(with = InstantSerializer::class)
+    val timestamp: Instant,
     val serviceAliases: List<String>,
 )
