@@ -1,5 +1,6 @@
 package dev.nordix.services.impls.message_service
 
+import dev.nordix.core.Constants.ROOT_SERVICE_PORT
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.model.ServiceContract
 import dev.nordix.services.domain.model.ServiceDescriptor
@@ -8,7 +9,6 @@ import dev.nordix.services.impls.message_service.accessors.SmsSendAccessor
 import dev.nordix.services.domain.model.actions.MessageAction
 import dev.nordix.services.domain.model.results.MessageActionResult
 import dev.nordix.settings.TerminalRepository
-import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 class SmsService @Inject constructor(
@@ -25,22 +25,18 @@ class SmsService @Inject constructor(
         )
     )
 
-    var serverJob: Job? = null
-
     override val descriptor: ServiceDescriptor = ServiceDescriptor(
         name = "Sms Service",
         owner = terminalRepository.terminal.id,
         contract = contract,
-        port = 12337,
+        port = ROOT_SERVICE_PORT,
     )
 
     override suspend fun act(action: MessageAction<MessageActionResult>): MessageActionResult {
         return action.act()
     }
 
-    override fun terminate() {
-        serverJob?.cancel()
-    }
+    override fun terminate() { }
 
     private inline fun <reified T: MessageAction<*>> T.act() : MessageActionResult {
         return when(val action = this) {

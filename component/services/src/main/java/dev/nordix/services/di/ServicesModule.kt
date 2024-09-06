@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.ServiceRepository
+import dev.nordix.services.impls.flash_service.FlashService
 import dev.nordix.services.impls.message_service.SmsService
 import dev.nordix.services.repository.ServiceRepositoryImpl
 import javax.inject.Singleton
@@ -27,5 +28,10 @@ class ServicesModule {
     @Singleton
     @IntoSet
     fun provideSmsService(smsService: SmsService): NordixTcpService<*, *> = smsService
+
+    @Provides
+    @Singleton
+    @IntoSet
+    fun provideFlashService(flashService: FlashService): NordixTcpService<*, *> = flashService
 
 }
