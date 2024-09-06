@@ -1,9 +1,10 @@
-package dev.nordix.services.domain.server_provider
+package dev.nordix.server_provider.data
 
 import android.util.Log
-import dev.nordix.services.NordixTcpService
+import dev.nordix.core.Constants.ROOT_SERVICE_PORT
+import dev.nordix.core.Constants.ROOT_WS_PATH
+import dev.nordix.server_provider.domain.WssServerProvider
 import dev.nordix.services.domain.ActionSerializer.actionResultJson
-import dev.nordix.services.domain.WssServerProvider
 import dev.nordix.services.domain.model.ServicesPresentation
 import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.results.ServiceActionResult
@@ -13,7 +14,6 @@ import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.WebSockets
@@ -23,24 +23,27 @@ import io.ktor.websocket.readText
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
-import javax.inject.Inject
+import kotlin.apply
+import kotlin.collections.forEach
+import kotlin.collections.mapNotNull
+import kotlin.let
 
-class WssServerProviderImpl @Inject constructor(
-    private val services: Set<@JvmSuppressWildcards NordixTcpService<*, *>>
+class WssServerProviderImpl @javax.inject.Inject constructor(
+    private val services: Set<@JvmSuppressWildcards dev.nordix.services.NordixTcpService<*, *>>
 ) : WssServerProvider {
 
-    override fun getServer(): NettyApplicationEngine {
+    override fun getServer(): io.ktor.server.netty.NettyApplicationEngine {
 
         val environment = applicationEngineEnvironment {
             connector {
-                port = 21337
+                port = ROOT_SERVICE_PORT
                 host = "0.0.0.0"
             }
 
             module {
-                install(WebSockets)
+                install(WebSockets.Plugin)
                 routing {
-                    webSocket("/ws") {
+                    webSocket(ROOT_WS_PATH) {
                         selfPresent()
                         observeMessages()
                     }
@@ -60,7 +63,7 @@ class WssServerProviderImpl @Inject constructor(
             timestamp = Instant.now(),
             serviceAliases = services.mapNotNull { it::class.qualifiedName }
         )
-        send(Frame.Text(actionResultJson.encodeToString(servicesPresentation)))
+        send(frame = Frame.Text(actionResultJson.encodeToString(servicesPresentation)))
     }
 
     private suspend fun DefaultWebSocketServerSession.observeMessages() {
@@ -71,7 +74,13 @@ class WssServerProviderImpl @Inject constructor(
                     val action = Json.decodeFromString<ServiceAction<ServiceActionResult>>(receivedText)
                     services.act(action)?.let { result ->
                         try {
-                            send(Frame.Text(actionResultJson.encodeToString<ServiceActionResult>(result)))
+                            send(
+                                Frame.Text(
+                                    actionResultJson.encodeToString<ServiceActionResult>(
+                                        result
+                                    )
+                                )
+                            )
                         } catch (e: Throwable) {
                             Log.e(this::class.simpleName, "error on parsing action result", e)
                         }
@@ -81,5 +90,6 @@ class WssServerProviderImpl @Inject constructor(
                 }
             }
         }
+        Log.e(this::class.simpleName, "ws session closed")
     }
 }

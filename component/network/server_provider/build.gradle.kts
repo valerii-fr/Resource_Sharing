@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.nordix.serviceы"
+    namespace = "dev.nordix.server_provider"
     compileSdk = 34
 
     defaultConfig {
@@ -43,6 +43,9 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":component:common"))
+    implementation(project(":component:services"))
+
+    implementation(libs.bundles.ktor)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)

@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dev.nordix.core.annotations.OnApplicationCreated
 import dev.nordix.discovery.domain.DiscoveryService
-import dev.nordix.services.domain.WssServerProvider
+import dev.nordix.server_provider.domain.WssServerProvider
 
 @Module
 @InstallIn(SingletonComponent::class)

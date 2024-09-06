@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.composeAnnotation)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.espresso.core)
+    implementation(project(":component:network:server_provider"))
 
     ksp(libs.hilt.compiler)
     ksp(libs.composeAnnotationProcessor)

@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/component/network" />
             <option value="$PROJECT_DIR$/component/network/discovery" />
             <option value="$PROJECT_DIR$/component/network/publish" />
+            <option value="$PROJECT_DIR$/component/network/server_provider" />
             <option value="$PROJECT_DIR$/component/network/service_manager" />
             <option value="$PROJECT_DIR$/component/services" />
             <option value="$PROJECT_DIR$/component/settings" />

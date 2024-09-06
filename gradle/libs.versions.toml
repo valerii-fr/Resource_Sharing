@@ -17,6 +17,7 @@ permissions = "0.35.2-beta"
 appcompat = "1.7.0"
 material = "1.12.0"
 ktor = "2.3.12"
+materialVersion = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +58,7 @@ ktor-server-contentNnegotiation = { group = "io.ktor", name = "ktor-server-conte
 
 #reflect
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
