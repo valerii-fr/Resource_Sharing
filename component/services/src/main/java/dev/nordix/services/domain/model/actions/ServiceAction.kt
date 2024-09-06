@@ -1,6 +1,6 @@
 package dev.nordix.services.domain.model.actions
 
-import dev.nordix.services.domain.model.ServiceActionResult
+import dev.nordix.services.domain.model.results.ServiceActionResult
 import kotlinx.serialization.Serializable
 
 @Serializable

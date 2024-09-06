@@ -86,6 +86,7 @@ dependencies {
     implementation(project(":feature:homescreen"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.bundles.ktor)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

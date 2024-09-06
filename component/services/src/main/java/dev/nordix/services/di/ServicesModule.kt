@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import dev.nordix.core.annotations.OnApplicationCreated
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.ServiceRepository
 import dev.nordix.services.domain.WssServerProvider
@@ -19,7 +20,11 @@ class ServicesModule {
 
     @Provides
     @Singleton
-    fun provideWssServerProvider(): WssServerProvider = WssServerProviderImpl()
+    fun provideWssServerProvider(
+        services: Set<@JvmSuppressWildcards NordixTcpService<*,*>>,
+    ): WssServerProvider = WssServerProviderImpl(
+        services = services,
+    )
 
     @Provides
     @Singleton

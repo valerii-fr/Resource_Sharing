@@ -1,11 +1,13 @@
 package dev.nordix.services.domain.server_provider
 
 import android.util.Log
+import dev.nordix.core.utils.getGenericTypesOf
 import dev.nordix.services.NordixTcpService
-import dev.nordix.services.domain.ActionSerializer.messageActionJson
+import dev.nordix.services.domain.ActionSerializer.actionJson
+import dev.nordix.services.domain.ActionSerializer.actionResultJson
 import dev.nordix.services.domain.WssServerProvider
 import dev.nordix.services.domain.model.actions.ServiceAction
-import dev.nordix.services.domain.model.ServiceActionResult
+import dev.nordix.services.domain.model.results.ServiceActionResult
 import dev.nordix.services.domain.model.actions.MessageAction.SendMessage
 import io.ktor.server.application.install
 import io.ktor.server.engine.applicationEngineEnvironment
@@ -21,25 +23,27 @@ import io.ktor.websocket.readText
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import kotlin.reflect.KClass
+import kotlin.reflect.full.allSupertypes
 
-class WssServerProviderImpl @Inject constructor() : WssServerProvider {
+class WssServerProviderImpl @Inject constructor(
+    private val services: Set<@JvmSuppressWildcards NordixTcpService<*, *>>
+) : WssServerProvider {
 
-    override fun getServer(service: NordixTcpService<*, *>): NettyApplicationEngine {
+    override fun getServer(): NettyApplicationEngine {
 
         val environment = applicationEngineEnvironment {
             connector {
-                port = service.descriptor.port
+                port = 21337
                 host = "0.0.0.0"
             }
-
-            val path = "${service.namePath}/ws"
 
             module {
                 install(WebSockets)
                 routing {
-                    webSocket(path) {
+                    webSocket("/ws") {
                         try {
-                            val s = messageActionJson.encodeToString<ServiceAction<ServiceActionResult>>(
+                            val s = actionJson.encodeToString<ServiceAction<ServiceActionResult>>(
                                 SendMessage(address = "123", body = "Hello World")
                             )
                             send(Frame.Text(s))
@@ -51,8 +55,13 @@ class WssServerProviderImpl @Inject constructor() : WssServerProvider {
                                 val receivedText = frame.readText()
                                 try {
                                     val action = Json.decodeFromString<ServiceAction<ServiceActionResult>>(receivedText)
-                                    service.typify().act(action)
-                                    send(Frame.Text("You said: $receivedText"))
+                                    services.act(action)?.let { result ->
+                                        try {
+                                            send(Frame.Text(actionResultJson.encodeToString<ServiceActionResult>(result)))
+                                        } catch (e: Throwable) {
+                                            Log.e(this::class.simpleName, "error on parsing action result", e)
+                                        }
+                                    }
                                 } catch (e: Throwable) {
                                     Log.e(this::class.simpleName, "error on parsing action", e)
                                 }
@@ -65,16 +74,31 @@ class WssServerProviderImpl @Inject constructor() : WssServerProvider {
 
         return embeddedServer(Netty, environment).apply {
             this.environment.connectors.forEach { connector ->
-                Log.i(this::class.simpleName, "Server ${service.namePath} started at ${connector.host}:${connector.port}")
+                Log.i(this::class.simpleName, "Server started at ${connector.host}:${connector.port}")
             }
         }
     }
 
+    private suspend fun Set<@JvmSuppressWildcards NordixTcpService<*, *>>.act(
+        action: ServiceAction<ServiceActionResult>
+    ) : ServiceActionResult? {
+        val requiredTypes = action::class.allSupertypes.map { it.classifier }.filter { it is KClass<*> }
+        return firstOrNull { service ->
+            service.getGenericTypesOf(NordixTcpService::class).first() in requiredTypes
+        }
+            ?.let { service ->
+                service.typify().act(action)
+            } ?: run {
+                Log.e(this::class.simpleName, "service not found for action $action")
+                null
+            }
+    }
+
     inline fun <reified S : NordixTcpService<*, *>> S.typify(
-    ): NordixTcpService<ServiceActionResult, ServiceAction<ServiceActionResult>> {
+    ): NordixTcpService<ServiceAction<ServiceActionResult>, ServiceActionResult> {
         return try {
             @Suppress("UNCHECKED_CAST")
-            this as NordixTcpService<ServiceActionResult, ServiceAction<ServiceActionResult>>
+            this as NordixTcpService<ServiceAction<ServiceActionResult>, ServiceActionResult>
         } catch (_: Throwable) {
             throw UnsupportedOperationException("Cannot proceed with $this")
         }

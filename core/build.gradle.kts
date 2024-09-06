@@ -41,6 +41,7 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinReflect)
     implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
     implementation(libs.androidx.core.ktx)

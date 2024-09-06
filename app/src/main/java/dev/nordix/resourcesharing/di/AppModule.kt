@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dev.nordix.core.annotations.OnApplicationCreated
 import dev.nordix.discovery.domain.DiscoveryService
+import dev.nordix.services.domain.WssServerProvider
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -15,9 +16,11 @@ class AppModule {
     @Provides
     @IntoSet
     fun provideOnApplicationCreated(
-        discoveryService: DiscoveryService
+        discoveryService: DiscoveryService,
+        wssServerProvider: WssServerProvider
     ): OnApplicationCreated = OnApplicationCreated {
         discoveryService.startLookup()
+        wssServerProvider.getServer().start()
     }
 
 }
