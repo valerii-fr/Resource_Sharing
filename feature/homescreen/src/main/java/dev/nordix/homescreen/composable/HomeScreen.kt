@@ -30,9 +30,11 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
 ) {
-    val servicesState by viewModel.serviceStates.collectAsState()
     val tabs = remember { NordixTab.tabs }
     var selectedTabIndex by remember { mutableStateOf(tabs.indexOf(NordixTab.ResolvedServices)) }
+
+    val servicesState by viewModel.serviceStates.collectAsState()
+    val selectedServices by viewModel.selectedServices.collectAsState()
 
     val selectedList = remember(selectedTabIndex, servicesState) {
         when (tabs[selectedTabIndex]) {
@@ -45,7 +47,7 @@ fun HomeScreen(
         modifier = modifier,
         topBar = {
             NordixTopBar(
-                onNavigateBack = {  }
+                onNavigateBack = { viewModel.closeServices() }
             )
         }
     ) { paddingValues ->
@@ -72,7 +74,23 @@ fun HomeScreen(
                     }
                 }
             }
-            ServicesList(services = selectedList)
+
+            if (selectedServices != null) {
+                ServicesScreen(
+                    services = selectedServices!!,
+                    onAction = { action ->
+
+                    }
+                )
+            } else {
+                ServicesList(
+                    services = selectedList,
+                    onGoToServices = { service ->
+                        viewModel.openServices(service)
+                    }
+                )
+            }
+
         }
     }
 }

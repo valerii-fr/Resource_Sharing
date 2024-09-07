@@ -1,5 +1,6 @@
 package dev.nordix.homescreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.nordix.homescreen.composable.UiServiceAction
@@ -34,11 +35,17 @@ class HomeScreenViewModel @Inject constructor(
 
     fun openServices(serviceInfo: ServiceInfo) {
         selectedServices.update { services ->
-            serviceStates.value.resolvedServiceStates.find { it.serviceInfo == serviceInfo }?.let {
-                ServiceActionsWrapper(
+            serviceStates.value.resolvedServiceStates.find {
+                it.serviceInfo.name == serviceInfo.name &&
+                it.serviceInfo.type == serviceInfo.type &&
+                it.serviceInfo.port == serviceInfo.port
+            }?.let {
+                val saw = ServiceActionsWrapper(
                     serviceInfo = it.serviceInfo,
                     it.serviceInfo.serviceAliases.mapActionsFromAliases()
                 )
+                Log.d("HomeScreenViewModel", "openServices: $saw")
+                saw
             } ?: services
         }
     }

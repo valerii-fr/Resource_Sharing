@@ -31,6 +31,7 @@ import kotlin.apply
 import kotlin.collections.forEach
 import kotlin.collections.mapNotNull
 import kotlin.let
+import kotlin.reflect.full.superclasses
 
 class WssServerProviderImpl @javax.inject.Inject constructor(
     private val services: Set<@JvmSuppressWildcards NordixTcpService<*, *>>,
@@ -67,7 +68,7 @@ class WssServerProviderImpl @javax.inject.Inject constructor(
         val servicesPresentation = ServerPresentation(
             terminalId = terminalRepository.terminal.id.value,
             timestamp = Instant.now(),
-            serviceAliases = services.mapNotNull { it::class.qualifiedName }
+            serviceAliases = services.mapNotNull { it::class.superclasses.first().qualifiedName }
         )
         send(Frame.Text(
             serviceInteractionJson

@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.reflect.full.superclasses
 
 class WssClientProviderImpl @Inject constructor(
     private val httpClient: HttpClient,
@@ -82,7 +83,7 @@ class WssClientProviderImpl @Inject constructor(
         val clientPresentation = ClientPresentation(
             terminalId = terminalRepository.terminal.id.value,
             name = terminalRepository.terminal.name,
-            serviceAliases = services.first().mapNotNull { it::class.qualifiedName }
+            serviceAliases = services.first().mapNotNull { it::class.superclasses.first().qualifiedName }
         )
         send(Frame.Text(
             serviceInteractionJson.encodeToString<ServiceInteraction>(
