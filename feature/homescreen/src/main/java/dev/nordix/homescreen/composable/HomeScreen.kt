@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.nordix.homescreen.HomeScreenViewModel
 import dev.nordix.homescreen.navigation.NordixTab
+import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
 
 @Composable
 fun HomeScreen(
@@ -86,7 +87,7 @@ fun HomeScreen(
                 ServicesList(
                     services = selectedList,
                     onGoToServices = { service ->
-                        viewModel.openServices(service)
+                        (service as? ResolvedServiceInfo)?.let(viewModel::openServices)
                     }
                 )
             }

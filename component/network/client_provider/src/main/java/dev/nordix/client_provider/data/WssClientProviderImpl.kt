@@ -83,6 +83,7 @@ class WssClientProviderImpl @Inject constructor(
         target: ClientTarget,
         action: ServiceInteraction
     ) {
+        Log.i(TAG, "postInteraction: $action to $target")
         activeSessions[target]?.send(Frame.Text(
             serviceInteractionJson.encodeToString<ServiceInteraction>(
                 ServiceInteraction.serializer(),

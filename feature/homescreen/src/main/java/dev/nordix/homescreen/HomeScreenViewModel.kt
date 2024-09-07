@@ -48,9 +48,7 @@ class HomeScreenViewModel @Inject constructor(
             serviceStates.value.resolvedServiceStates
                 .filter { it.status == ServiceState.ServiceStatus.Connected }
                 .find {
-                    it.serviceInfo.name == selectedServices.value?.serviceInfo?.name &&
-                            it.serviceInfo.type == selectedServices.value?.serviceInfo?.type &&
-                            it.serviceInfo.port == selectedServices.value?.serviceInfo?.port
+                    it.serviceInfo.deviceId == selectedServices.value?.serviceInfo?.deviceId
                 }
                 ?.let { service ->
                     wssClientProvider.postInteraction(
@@ -63,12 +61,12 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun openServices(serviceInfo: ServiceInfo) {
+    fun openServices(serviceInfo: ResolvedServiceInfo) {
+        Log.i("HomeScreenViewModel", "openServices: $serviceInfo")
+        Log.i("HomeScreenViewModel", "resolvedServices: ${serviceStates.value.resolvedServiceStates}")
         selectedServices.update { services ->
             serviceStates.value.resolvedServiceStates.find {
-                it.serviceInfo.name == serviceInfo.name &&
-                it.serviceInfo.type == serviceInfo.type &&
-                it.serviceInfo.port == serviceInfo.port
+                it.serviceInfo.deviceId == serviceInfo.deviceId
             }?.let { service ->
                 val saw = ServiceActionsWrapper(
                     serviceInfo = service.serviceInfo,

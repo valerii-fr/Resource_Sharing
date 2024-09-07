@@ -24,6 +24,8 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
+import io.netty.util.internal.logging.InternalLoggerFactory
+import io.netty.util.internal.logging.JdkLoggerFactory
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -39,7 +41,7 @@ class WssServerProviderImpl @javax.inject.Inject constructor(
 ) : WssServerProvider {
 
     override fun getServer(): NettyApplicationEngine {
-
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
         val environment = applicationEngineEnvironment {
             connector {
                 port = ROOT_SERVICE_PORT
