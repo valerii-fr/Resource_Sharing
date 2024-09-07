@@ -8,4 +8,5 @@ data class ServiceInfo(
     val type: String,
     val port: Int,
     val address: InetAddress?,
+    val serviceAliases: List<String> = emptyList(),
 )

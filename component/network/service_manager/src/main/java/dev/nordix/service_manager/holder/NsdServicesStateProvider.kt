@@ -278,8 +278,13 @@ class NsdServicesStateProvider(
         update { state ->
             val serviceTypeIndex = state.resolvedServiceStates.indexOfFirst { it.serviceInfo.type == serviceInfo?.serviceType }
             if (serviceTypeIndex > -1) {
-                val newResolveState = state.resolvedServiceStates[serviceTypeIndex]
-                    .copy(status = ServiceState.ServiceStatus.Resolved)
+                val currentResolveState = state.resolvedServiceStates[serviceTypeIndex]
+                val newResolveState = if (currentResolveState.status != ServiceState.ServiceStatus.Connected) {
+                    currentResolveState.copy(status = ServiceState.ServiceStatus.Resolved)
+                } else {
+                    currentResolveState
+
+                }
                 state.copy(
                     resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                         this[serviceTypeIndex] = newResolveState }

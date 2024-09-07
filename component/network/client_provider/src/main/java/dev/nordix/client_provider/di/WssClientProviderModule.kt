@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.nordix.client_provider.data.WssClientProviderImpl
 import dev.nordix.client_provider.domain.WssClientProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.services.ServiceRepository
 import dev.nordix.settings.TerminalRepository
 import io.ktor.client.HttpClient
@@ -28,10 +29,12 @@ class WssClientProviderModule {
         httpClient: HttpClient,
         serviceRepository: ServiceRepository,
         terminalRepository: TerminalRepository,
+        serviceStateProvider: NsdServicesStateProvider
     ) : WssClientProvider = WssClientProviderImpl(
         httpClient = httpClient,
         serviceRepository = serviceRepository,
         terminalRepository = terminalRepository,
+        serviceStateProvider = serviceStateProvider
     )
 
 }

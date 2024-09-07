@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.kotlinReflect)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(project(":component:network:service_manager"))
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)

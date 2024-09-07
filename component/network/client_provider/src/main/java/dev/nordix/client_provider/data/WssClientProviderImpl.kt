@@ -3,6 +3,8 @@ package dev.nordix.client_provider.data
 import android.util.Log
 import dev.nordix.client_provider.domain.WssClientProvider
 import dev.nordix.client_provider.domain.model.ClientTarget
+import dev.nordix.service_manager.domain.model.ServiceState
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.services.ServiceRepository
 import dev.nordix.services.domain.ActionSerializer.serviceInteractionJson
 import dev.nordix.services.domain.model.actions.ServiceAction
@@ -17,7 +19,6 @@ import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
-import io.ktor.websocket.readBytes
 import io.ktor.websocket.readReason
 import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ class WssClientProviderImpl @Inject constructor(
     private val httpClient: HttpClient,
     private val terminalRepository: TerminalRepository,
     private val serviceRepository: ServiceRepository,
+    private val serviceStateProvider: NsdServicesStateProvider,
 ) : WssClientProvider {
 
     private val services = serviceRepository.observeServices()
@@ -72,7 +74,7 @@ class WssClientProviderImpl @Inject constructor(
             }
         }
         activeSessions.apply {
-            keys.firstOrNull { it.host == host }?.let(::remove)
+            keys.firstOrNull { it.host == host }?.let(::remove)?.close()
         }
     }
 
@@ -97,39 +99,83 @@ class WssClientProviderImpl @Inject constructor(
                     val text = message.readText()
                     Log.i(TAG, "Received text message: $text")
                     try {
-                        val receivedAction = serviceInteractionJson.decodeFromString<ServiceInteraction>(text)
-                        Log.i(TAG, "Received services presentation: $receivedAction")
-                        when (receivedAction) {
-                            is ServiceAction<*> -> {
-                                Log.i(TAG, "Received services action: $receivedAction")
-                                when (receivedAction) {
-                                    is ServerPresentation -> {
-                                        Log.i(TAG, "Received services presentation: $receivedAction")
-                                    }
-                                    else -> {
-                                        Log.i(TAG, "Received unsupported client action: $receivedAction")
-                                    }
-                                }
-                            }
-                            is ServiceActionResult -> {
-                                Log.i(TAG, "Received services action result: $receivedAction")
-                            }
-                            else -> {Log.i(TAG, "Received unknown action: $receivedAction") }
-                        }
+                        serviceInteractionJson
+                            .decodeFromString<ServiceInteraction>(text)
+                            .process()
                     } catch (e: Throwable) {
                         Log.e(TAG, "error on parsing action", e)
                     }
                 }
-                is Frame.Binary -> Log.i(TAG, "Received binary message: ${message.readBytes().joinToString(", ")}")
-                is Frame.Ping -> Log.i(TAG, "Received ping")
-                is Frame.Pong -> Log.i(TAG, "Received pong")
                 is Frame.Close -> {
                     Log.i(TAG, "Connection closed: ${message.readReason()}")
                     close()
                 }
+                else -> { }
             }
         }
         Log.d(TAG, "Connection closed")
+        this.call.request.url.host
+        activeSessions.filter { it.value.hashCode() == this@observeMessages.hashCode() }.keys.onEach { target ->
+            serviceStateProvider.update { servicesState ->
+                servicesState.copy(
+                    resolvedServiceStates = servicesState.resolvedServiceStates.toMutableList().apply {
+                        val tI = indexOfFirst { service ->
+                            Log.w(TAG, "checking host $service.serviceInfo.address?.hostAddress")
+                            service.serviceInfo.address?.hostAddress == target.host
+                        }
+                        if (tI > -1) {
+                            val targetValue = get(tI)
+                            this[tI] = targetValue.copy(
+                                status = ServiceState.ServiceStatus.Disconnected,
+                            )
+                        } else {
+                            Log.w(TAG, "Closed unassigned session: ${target.host}")
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun ServiceInteraction.process() {
+        Log.i(TAG, "Received interaction: $this")
+        when (this) {
+            is ServiceAction<*> -> {
+                when (this) {
+                    is ServerPresentation -> process()
+                    else -> Log.i(TAG, "Received client action: $this")
+                }
+            }
+
+            is ServiceActionResult -> Log.i(TAG, "Received services action result: $this")
+
+            else -> Log.i(TAG, "Received unknown action: $this")
+        }
+
+    }
+
+    private fun ServerPresentation.process() {
+        Log.i(TAG, "Received services presentation: $this")
+        serviceStateProvider.update { servicesState ->
+            servicesState.copy(
+                resolvedServiceStates = servicesState.resolvedServiceStates.toMutableList().apply {
+                    val tI = indexOfFirst { service ->
+                        service.terminalId == terminalId
+                    }
+                    if (tI > -1) {
+                        val targetValue = get(tI)
+                        this[tI] = targetValue.copy(
+                            status = ServiceState.ServiceStatus.Connected,
+                            serviceInfo = targetValue.serviceInfo.copy(
+                                serviceAliases = serviceAliases
+                            )
+                        )
+                    } else {
+                        Log.w(TAG, "Received presentation from unknown terminal: ${terminalId}")
+                    }
+                }
+            )
+        }
     }
 
     companion object {

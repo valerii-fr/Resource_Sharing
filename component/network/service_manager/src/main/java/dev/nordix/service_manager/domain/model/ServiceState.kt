@@ -6,6 +6,7 @@ data class ServiceState(
 ) {
 
     val name get() = serviceInfo.name.substringAfter("/")
+    val terminalId get() = serviceInfo.deviceId
 
     enum class ServiceStatus {
         Found,
@@ -15,6 +16,8 @@ data class ServiceState(
         Unregistered,
         Resolved,
         ResolveFailed,
+        Connected,
+        Disconnected,
     }
 
 }
