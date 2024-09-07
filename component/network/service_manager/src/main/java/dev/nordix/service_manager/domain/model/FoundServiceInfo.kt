@@ -1,7 +1,8 @@
 package dev.nordix.service_manager.domain.model
 
 data class FoundServiceInfo(
-    val name: String,
+    override val name: String,
     val deviceId: String,
-    val type: String,
-)
+    override val type: String,
+    override val port: Int = 0,
+) : ServiceInfo

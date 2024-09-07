@@ -3,10 +3,13 @@ package dev.nordix.discovery.listeners
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import dev.nordix.client_provider.domain.WssClientProvider
+import dev.nordix.service_manager.domain.model.mapper.terminalId
 import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class DiscoveryListener(
     private val nsdServicesStateProvider: NsdServicesStateProvider,
@@ -15,6 +18,8 @@ class DiscoveryListener(
     private val scope: CoroutineScope,
     private val terminalRepository: TerminalRepository,
 ) : NsdManager.DiscoveryListener {
+
+    val mutex = Mutex()
 
     override fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) =
         nsdServicesStateProvider.onStartDiscoveryFailed(serviceType, errorCode)
@@ -29,19 +34,27 @@ class DiscoveryListener(
         nsdServicesStateProvider.onDiscoveryStopped(serviceType)
 
     override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
-        nsdServicesStateProvider.onServiceFound(serviceInfo)
-        nsdManager.resolveService(serviceInfo, ResolveListener(
-            nsdServicesStateProvider = nsdServicesStateProvider,
-            wssClientProvider = wssClientProvider,
-            scope = scope,
-            terminalRepository = terminalRepository,
-        ))
+        if (serviceInfo?.terminalId != terminalRepository.terminal.id.value.toString()) {
+            scope.launch {
+                mutex.withLock {
+                    nsdServicesStateProvider.onServiceFound(serviceInfo)
+                    nsdManager.resolveService(serviceInfo, ResolveListener(
+                        nsdServicesStateProvider = nsdServicesStateProvider,
+                        wssClientProvider = wssClientProvider,
+                        scope = scope,
+                        terminalRepository = terminalRepository,
+                    ))
+                }
+            }
+        }
     }
 
     override fun onServiceLost(serviceInfo: NsdServiceInfo?) {
-        nsdServicesStateProvider.onServiceLost(serviceInfo)
         scope.launch {
-            wssClientProvider.terminateClient(serviceInfo?.host?.hostAddress ?: "")
+            mutex.withLock {
+                nsdServicesStateProvider.onServiceLost(serviceInfo)
+                wssClientProvider.terminateClient(serviceInfo?.host?.hostAddress ?: "")
+            }
         }
     }
 

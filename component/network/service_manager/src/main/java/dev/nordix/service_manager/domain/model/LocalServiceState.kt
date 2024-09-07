@@ -1,10 +1,9 @@
 package dev.nordix.service_manager.domain.model
 
+import dev.nordix.service_manager.domain.model.ServiceState.ServiceStatus
+import dev.nordix.service_manager.domain.model.found.LocalServiceInfo
+
 data class LocalServiceState(
-    val status: ServiceState.ServiceStatus,
-    val serviceInfo: LocalServiceInfo,
-) {
-
-    val name get() = serviceInfo.name.substringAfter("/")
-
-}
+    override val status: ServiceStatus,
+    override val serviceInfo: LocalServiceInfo,
+) : ServiceState

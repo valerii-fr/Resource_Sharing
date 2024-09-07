@@ -6,7 +6,7 @@ import dev.nordix.discovery.domain.DiscoveryService
 import dev.nordix.core.Constants
 import dev.nordix.discovery.listeners.DiscoveryListener
 import dev.nordix.service_manager.domain.model.FoundServiceInfo
-import dev.nordix.service_manager.domain.model.ServiceInfo
+import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
 import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
@@ -30,8 +30,8 @@ class DiscoveryServiceImpl @Inject constructor(
         nsdServicesStateProvider.map { it.foundServiceStates.map { it.serviceInfo } }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val resolvedServices: StateFlow<List<ServiceInfo>> =
-        nsdServicesStateProvider.map { it.resolvedServiceStates.map { it.serviceInfo } }
+    override val resolvedServices: StateFlow<List<ResolvedServiceInfo>> =
+        nsdServicesStateProvider.map { it.resolvedResolvedServiceStates.map { it.serviceInfo } }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override fun startLookup() {

@@ -15,38 +15,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import dev.nordix.homescreen.HomeScreenViewModel
-import dev.nordix.homescreen.navigation.NavigationDirections
 import dev.nordix.homescreen.navigation.NordixTab
-import dev.nordix.homescreen.navigation.argumentList
-import dev.nordix.homescreen.navigation.route
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
 ) {
-
-    val navController = rememberNavController()
     val servicesState by viewModel.serviceStates.collectAsState()
     val tabs = remember { NordixTab.tabs }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(tabs.indexOf(NordixTab.ResolvedServices)) }
+
+    val selectedList = remember(selectedTabIndex) {
+        when (tabs[selectedTabIndex]) {
+            NordixTab.FoundServices -> servicesState.foundServiceStates
+            NordixTab.ResolvedServices -> servicesState.resolvedResolvedServiceStates
+        }
+    }
 
     Scaffold(
         modifier = modifier,
         topBar = {
             NordixTopBar(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = {  }
             )
         }
     ) { paddingValues ->
@@ -60,10 +59,7 @@ fun HomeScreen(
                 tabs.forEachIndexed { index, tab ->
                     Tab(
                         selected = index == selectedTabIndex,
-                        onClick = {
-                            selectedTabIndex = index
-                            navController.navigate(tab.route)
-                        }
+                        onClick = { selectedTabIndex = index }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -76,34 +72,7 @@ fun HomeScreen(
                     }
                 }
             }
-
-            NavHost(
-                navController = navController,
-                startDestination = NavigationDirections.MyServices.route
-            ) {
-
-                composable(
-                    route = NavigationDirections.MyServices.route,
-                    arguments = NavigationDirections.MyServices.argumentList
-                ) {
-                    ServicesList(services = servicesState.localServiceStates)
-                }
-
-                composable(
-                    route = NavigationDirections.FoundServices.route,
-                    arguments = NavigationDirections.FoundServices.argumentList
-                ) {
-                    ServicesList(services = servicesState.foundServiceStates)
-                }
-
-                composable(
-                    route = NavigationDirections.ResolvedServices.route,
-                    arguments = NavigationDirections.ResolvedServices.argumentList
-                ) {
-                    ServicesList(services = servicesState.resolvedServiceStates)
-                }
-
-            }
+            ServicesList(services = selectedList)
         }
     }
 }

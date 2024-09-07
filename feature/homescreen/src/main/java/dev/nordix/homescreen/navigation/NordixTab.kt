@@ -14,12 +14,6 @@ sealed interface NordixTab {
     val route: String
     @get: StringRes val name: Int
 
-    object MyServices : NordixTab {
-        override val icon: ImageVector = Icons.Default.MyLocation
-        override val name: Int = R.string.my_services
-        override val route: String = NavigationDirections.MyServices.route
-    }
-
     object FoundServices : NordixTab {
         override val icon: ImageVector = Icons.Default.Search
         override val name: Int = R.string.found_services
@@ -34,7 +28,6 @@ sealed interface NordixTab {
 
     companion object {
         val tabs = listOf(
-            MyServices,
             FoundServices,
             ResolvedServices,
         )
