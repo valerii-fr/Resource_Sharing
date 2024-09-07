@@ -62,7 +62,10 @@ fun HomeScreen(
                 tabs.forEachIndexed { index, tab ->
                     Tab(
                         selected = index == selectedTabIndex,
-                        onClick = { selectedTabIndex = index }
+                        onClick = {
+                            selectedTabIndex = index
+                            viewModel.closeServices()
+                        }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
