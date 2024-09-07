@@ -7,4 +7,10 @@
     <string name="action_disconnect">Disconnect</string>
     <string name="action_forget">Forget</string>
     <string name="action_connect">Connect</string>
+    <string name="send_message">Send</string>
+    <string name="get_messages">Get all</string>
+    <string name="message_actions">Message actions</string>
+    <string name="switch_on">Switch on</string>
+    <string name="switch_off">Switch off</string>
+    <string name="flash_actions">Flash actions</string>
 </resources>

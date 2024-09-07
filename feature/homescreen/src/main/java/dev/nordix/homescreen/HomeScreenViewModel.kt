@@ -9,6 +9,8 @@ import dev.nordix.service_manager.domain.model.ServiceInfo
 import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
 import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceState
 import dev.nordix.service_manager.holder.NsdServicesStateProvider
+import dev.nordix.services.NordixTcpService
+import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.actions.mapActionsFromAliases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +28,16 @@ class HomeScreenViewModel @Inject constructor(
         field = MutableStateFlow(null)
 
     fun acceptAction(action: UiServiceAction) {
+        Log.i("HomeScreenViewModel", "acceptAction: $action")
         when (action) {
             UiServiceAction.Connect -> {}
             UiServiceAction.Disconnect -> {}
             UiServiceAction.Forget -> {}
         }
+    }
+
+    fun acceptAction(action: ServiceAction<*>) {
+        Log.i("HomeScreenViewModel", "acceptAction: $action")
     }
 
     fun openServices(serviceInfo: ServiceInfo) {
@@ -39,10 +46,12 @@ class HomeScreenViewModel @Inject constructor(
                 it.serviceInfo.name == serviceInfo.name &&
                 it.serviceInfo.type == serviceInfo.type &&
                 it.serviceInfo.port == serviceInfo.port
-            }?.let {
+            }?.let { service ->
                 val saw = ServiceActionsWrapper(
-                    serviceInfo = it.serviceInfo,
-                    it.serviceInfo.serviceAliases.mapActionsFromAliases()
+                    serviceInfo = service.serviceInfo,
+                    service.serviceInfo.serviceAliases
+                        .filter { it != NordixTcpService.PresentationService::class.qualifiedName }
+                        .mapActionsFromAliases()
                 )
                 Log.d("HomeScreenViewModel", "openServices: $saw")
                 saw

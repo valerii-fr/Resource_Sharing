@@ -79,7 +79,7 @@ fun HomeScreen(
                 ServicesScreen(
                     services = selectedServices!!,
                     onAction = { action ->
-
+                        viewModel.acceptAction(action)
                     }
                 )
             } else {

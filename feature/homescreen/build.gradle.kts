@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":component:network:service_manager"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinReflect)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
