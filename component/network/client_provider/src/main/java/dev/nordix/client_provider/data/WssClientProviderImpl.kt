@@ -79,6 +79,18 @@ class WssClientProviderImpl @Inject constructor(
         }
     }
 
+    override suspend fun postInteraction(
+        target: ClientTarget,
+        action: ServiceInteraction
+    ) {
+        activeSessions[target]?.send(Frame.Text(
+            serviceInteractionJson.encodeToString<ServiceInteraction>(
+                ServiceInteraction.serializer(),
+                action
+            )
+        ))
+    }
+
     private suspend fun DefaultClientWebSocketSession.selfPresent() {
         val clientPresentation = ClientPresentation(
             terminalId = terminalRepository.terminal.id.value,

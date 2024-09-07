@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.extendedIcons)
     implementation(project(":component:services"))
+    implementation(project(":component:network:client_provider"))
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)
