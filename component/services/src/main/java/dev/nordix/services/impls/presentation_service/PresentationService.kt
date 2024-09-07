@@ -2,6 +2,7 @@ package dev.nordix.services.impls.presentation_service
 
 import dev.nordix.core.Constants.ROOT_SERVICE_PORT
 import dev.nordix.services.NordixTcpService
+import dev.nordix.services.NordixTcpService.PresentationService
 import dev.nordix.services.domain.model.ServiceContract
 import dev.nordix.services.domain.model.ServiceDescriptor
 import dev.nordix.services.domain.model.actions.ServicesPresentationAction
@@ -11,9 +12,9 @@ import dev.nordix.services.domain.model.actions.ServicesPresentationResult
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 
-class PresentationService @Inject constructor(
+class PresentationServiceImpl @Inject constructor(
     terminalRepository: TerminalRepository,
-) : NordixTcpService<ServicesPresentationAction<ServicesPresentationResult>, ServicesPresentationResult> {
+) : PresentationService() {
 
     private val contract = ServiceContract(
         type = ServiceContract.ServiceType.INFO,

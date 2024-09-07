@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.extendedIcons)
+    implementation(project(":component:services"))
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)

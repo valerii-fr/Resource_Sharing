@@ -37,7 +37,7 @@ fun HomeScreen(
     val selectedList = remember(selectedTabIndex, servicesState) {
         when (tabs[selectedTabIndex]) {
             NordixTab.FoundServices -> servicesState.foundServiceStates
-            NordixTab.ResolvedServices -> servicesState.resolvedResolvedServiceStates
+            NordixTab.ResolvedServices -> servicesState.resolvedServiceStates
         }
     }
 

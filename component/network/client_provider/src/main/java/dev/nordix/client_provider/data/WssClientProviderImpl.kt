@@ -4,7 +4,6 @@ import android.util.Log
 import dev.nordix.client_provider.domain.WssClientProvider
 import dev.nordix.client_provider.domain.model.ClientTarget
 import dev.nordix.service_manager.domain.model.ServiceState.ServiceStatus
-import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceState
 import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.services.ServiceRepository
 import dev.nordix.services.domain.ActionSerializer.serviceInteractionJson
@@ -119,7 +118,7 @@ class WssClientProviderImpl @Inject constructor(
         activeSessions.filter { it.value.hashCode() == this@observeMessages.hashCode() }.keys.onEach { target ->
             serviceStateProvider.update { servicesState ->
                 servicesState.copy(
-                    resolvedResolvedServiceStates = servicesState.resolvedResolvedServiceStates.toMutableList().apply {
+                    resolvedServiceStates = servicesState.resolvedServiceStates.toMutableList().apply {
                         val tI = indexOfFirst { service ->
                             Log.w(TAG, "checking host $service.serviceInfo.address?.hostAddress")
                             service.serviceInfo.address?.hostAddress == target.host
@@ -159,7 +158,7 @@ class WssClientProviderImpl @Inject constructor(
         Log.i(TAG, "Received services presentation: $this")
         serviceStateProvider.update { servicesState ->
             servicesState.copy(
-                resolvedResolvedServiceStates = servicesState.resolvedResolvedServiceStates.toMutableList().apply {
+                resolvedServiceStates = servicesState.resolvedServiceStates.toMutableList().apply {
                     val tI = indexOfFirst { service ->
                         service.terminalId == terminalId
                     }

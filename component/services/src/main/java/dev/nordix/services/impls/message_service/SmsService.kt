@@ -11,11 +11,11 @@ import dev.nordix.services.domain.model.actions.MessageActionResult
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 
-class SmsService @Inject constructor(
+class SmsServiceImpl @Inject constructor(
     private val messageAccessor: SmsRetrieveAccessor,
     private val smsSendAccessor: SmsSendAccessor,
     terminalRepository: TerminalRepository,
-) : NordixTcpService<MessageAction<MessageActionResult>, MessageActionResult> {
+) : NordixTcpService.SmsService() {
 
     private val contract = ServiceContract(
         type = ServiceContract.ServiceType.SERVICE_PROXY,

@@ -31,7 +31,7 @@ class DiscoveryServiceImpl @Inject constructor(
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val resolvedServices: StateFlow<List<ResolvedServiceInfo>> =
-        nsdServicesStateProvider.map { it.resolvedResolvedServiceStates.map { it.serviceInfo } }
+        nsdServicesStateProvider.map { it.resolvedServiceStates.map { it.serviceInfo } }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override fun startLookup() {

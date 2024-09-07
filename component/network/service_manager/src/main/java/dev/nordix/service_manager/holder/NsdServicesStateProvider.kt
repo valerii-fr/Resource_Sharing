@@ -115,7 +115,7 @@ class NsdServicesStateProvider(
                         foundServiceStates = state.foundServiceStates.toMutableList().apply {
                             removeAll { it.serviceInfo == domainServiceInfo }
                         },
-                        resolvedResolvedServiceStates = state.resolvedResolvedServiceStates.toMutableList().apply {
+                        resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                             removeAll { it.serviceInfo.name == domainServiceInfo.name }
                         },
                     )
@@ -262,12 +262,12 @@ class NsdServicesStateProvider(
     ) {
         Log.e(tag, "onResolveFailed: serviceInfo = $serviceInfo, errorCode = $errorCode")
         update { state ->
-            val serviceTypeIndex = state.resolvedResolvedServiceStates.indexOfFirst { it.serviceInfo.type == serviceInfo?.serviceType }
+            val serviceTypeIndex = state.resolvedServiceStates.indexOfFirst { it.serviceInfo.type == serviceInfo?.serviceType }
             if (serviceTypeIndex > -1) {
-                val newResolveState = state.resolvedResolvedServiceStates[serviceTypeIndex]
+                val newResolveState = state.resolvedServiceStates[serviceTypeIndex]
                     .copy(status = ServiceStatus.ResolveFailed)
                 state.copy(
-                    resolvedResolvedServiceStates = state.resolvedResolvedServiceStates.toMutableList().apply {
+                    resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                         this[serviceTypeIndex] = newResolveState }
                 )
             } else state
@@ -277,9 +277,9 @@ class NsdServicesStateProvider(
     fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
         Log.e(tag, "onServiceResolved: serviceInfo = $serviceInfo")
         update { state ->
-            val serviceTypeIndex = state.resolvedResolvedServiceStates.indexOfFirst { it.serviceInfo.name == serviceInfo?.serviceName }
+            val serviceTypeIndex = state.resolvedServiceStates.indexOfFirst { it.serviceInfo.name == serviceInfo?.serviceName }
             if (serviceTypeIndex > -1) {
-                val currentResolveState = state.resolvedResolvedServiceStates[serviceTypeIndex]
+                val currentResolveState = state.resolvedServiceStates[serviceTypeIndex]
                 val newResolveState = if (currentResolveState.status != ServiceStatus.Connected) {
                     currentResolveState.copy(status = ServiceStatus.Resolved)
                 } else {
@@ -287,13 +287,13 @@ class NsdServicesStateProvider(
 
                 }
                 state.copy(
-                    resolvedResolvedServiceStates = state.resolvedResolvedServiceStates.toMutableList().apply {
+                    resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                         this[serviceTypeIndex] = newResolveState }
                 )
             } else {
                 serviceInfo?.let {
                     state.copy(
-                        resolvedResolvedServiceStates = state.resolvedResolvedServiceStates.toMutableList().apply {
+                        resolvedServiceStates = state.resolvedServiceStates.toMutableList().apply {
                             add(
                                 ResolvedServiceState(
                                     status = ServiceStatus.Resolved,

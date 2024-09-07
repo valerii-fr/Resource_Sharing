@@ -15,10 +15,10 @@ import dev.nordix.services.domain.model.actions.FlashActionResult
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 
-class FlashService @Inject constructor(
+class FlashServiceImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     terminalRepository: TerminalRepository,
-) : NordixTcpService<FlashAction<FlashActionResult>, FlashActionResult> {
+) : NordixTcpService.FlashService() {
 
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val isFlashAvailable = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
