@@ -4,16 +4,20 @@ import android.util.Log
 import dev.nordix.core.Constants.ROOT_SERVICE_PORT
 import dev.nordix.core.Constants.ROOT_WS_PATH
 import dev.nordix.server_provider.domain.WssServerProvider
-import dev.nordix.services.domain.ActionSerializer.actionResultJson
-import dev.nordix.services.domain.model.ServicesPresentation
+import dev.nordix.services.NordixTcpService
+import dev.nordix.services.domain.ActionSerializer.serviceInteractionJson
 import dev.nordix.services.domain.model.actions.ServiceAction
-import dev.nordix.services.domain.model.results.ServiceActionResult
+import dev.nordix.services.domain.model.actions.ServiceActionResult
+import dev.nordix.services.domain.model.actions.ServiceInteraction
+import dev.nordix.services.domain.model.actions.ServicesPresentationAction.ServerPresentation
 import dev.nordix.services.utils.act
+import dev.nordix.settings.TerminalRepository
 import io.ktor.server.application.install
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.WebSockets
@@ -29,10 +33,11 @@ import kotlin.collections.mapNotNull
 import kotlin.let
 
 class WssServerProviderImpl @javax.inject.Inject constructor(
-    private val services: Set<@JvmSuppressWildcards dev.nordix.services.NordixTcpService<*, *>>
+    private val services: Set<@JvmSuppressWildcards NordixTcpService<*, *>>,
+    private val terminalRepository: TerminalRepository,
 ) : WssServerProvider {
 
-    override fun getServer(): io.ktor.server.netty.NettyApplicationEngine {
+    override fun getServer(): NettyApplicationEngine {
 
         val environment = applicationEngineEnvironment {
             connector {
@@ -53,43 +58,59 @@ class WssServerProviderImpl @javax.inject.Inject constructor(
 
         return embeddedServer(Netty, environment).apply {
             this.environment.connectors.forEach { connector ->
-                Log.i(this::class.simpleName, "Server started at ${connector.host}:${connector.port}")
+                Log.i(TAG, "Server started at ${connector.host}:${connector.port}")
             }
         }
     }
 
     private suspend fun DefaultWebSocketServerSession.selfPresent() {
-        val servicesPresentation = ServicesPresentation(
+        val servicesPresentation = ServerPresentation(
+            terminalId = terminalRepository.terminal.id.value,
             timestamp = Instant.now(),
             serviceAliases = services.mapNotNull { it::class.qualifiedName }
         )
-        send(frame = Frame.Text(actionResultJson.encodeToString(servicesPresentation)))
+        send(Frame.Text(
+            serviceInteractionJson
+                .encodeToString<ServiceInteraction>(servicesPresentation)
+        ))
     }
 
     private suspend fun DefaultWebSocketServerSession.observeMessages() {
         for (frame in incoming) {
             if (frame is Frame.Text) {
                 val receivedText = frame.readText()
+                Log.i(TAG, "Received text message: $receivedText")
                 try {
-                    val action = Json.decodeFromString<ServiceAction<ServiceActionResult>>(receivedText)
-                    services.act(action)?.let { result ->
-                        try {
-                            send(
-                                Frame.Text(
-                                    actionResultJson.encodeToString<ServiceActionResult>(
-                                        result
+                    val action = Json.decodeFromString<ServiceInteraction>(receivedText)
+                    when(action) {
+                        is ServiceAction<*> -> {
+                            services.act(action)?.let { result ->
+                                try {
+                                    send(
+                                        Frame.Text(
+                                            serviceInteractionJson.encodeToString<ServiceActionResult>(
+                                                result
+                                            )
+                                        )
                                     )
-                                )
-                            )
-                        } catch (e: Throwable) {
-                            Log.e(this::class.simpleName, "error on parsing action result", e)
+                                } catch (e: Throwable) {
+                                    Log.e(TAG, "error on parsing action result", e)
+                                }
+                            }
+                        }
+                        is ServiceActionResult -> {
+                            Log.d(TAG, "Received services action result: $action")
                         }
                     }
                 } catch (e: Throwable) {
-                    Log.e(this::class.simpleName, "error on parsing action", e)
+                    Log.e(TAG, "error on parsing action", e)
                 }
             }
         }
-        Log.e(this::class.simpleName, "ws session closed")
+        Log.e(TAG, "ws session closed")
+    }
+
+    companion object {
+        private const val TAG = "WssServerProviderImpl"
     }
 }

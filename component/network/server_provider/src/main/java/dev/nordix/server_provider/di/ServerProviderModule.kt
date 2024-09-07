@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.nordix.server_provider.data.WssServerProviderImpl
 import dev.nordix.server_provider.domain.WssServerProvider
 import dev.nordix.services.NordixTcpService
+import dev.nordix.settings.TerminalRepository
 import javax.inject.Singleton
 
 @Module
@@ -17,8 +18,10 @@ class ServerProviderModule {
     @Singleton
     fun provideWssServerProvider(
         services: Set<@JvmSuppressWildcards NordixTcpService<*,*>>,
+        terminalRepository: TerminalRepository,
     ): WssServerProvider =
         WssServerProviderImpl(
             services = services,
+            terminalRepository = terminalRepository,
         )
 }

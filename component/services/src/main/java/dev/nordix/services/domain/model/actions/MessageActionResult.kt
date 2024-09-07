@@ -1,4 +1,4 @@
-package dev.nordix.services.domain.model.results
+package dev.nordix.services.domain.model.actions
 
 import dev.nordix.services.impls.message_service.model.MessageEntity
 import kotlinx.serialization.Serializable

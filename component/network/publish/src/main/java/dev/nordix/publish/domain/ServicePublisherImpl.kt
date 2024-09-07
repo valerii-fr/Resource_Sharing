@@ -5,12 +5,12 @@ import android.net.nsd.NsdServiceInfo
 import dev.nordix.core.Constants
 import dev.nordix.publish.ServicePublisher
 import dev.nordix.publish.listeners.PublishingListener
-import dev.nordix.service_manager.holder.ServicesStateProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 
 class ServicePublisherImpl @Inject constructor(
-    private val servicesStateProvider: ServicesStateProvider,
+    private val nsdServicesStateProvider: NsdServicesStateProvider,
     private val terminalRepository: TerminalRepository,
     private val nsdManager: NsdManager,
 ) : ServicePublisher {
@@ -27,7 +27,7 @@ class ServicePublisherImpl @Inject constructor(
             serviceInfo,
             NsdManager.PROTOCOL_DNS_SD,
             registeredListeners.getOrPut(serviceInfo.serviceName) {
-                PublishingListener(servicesStateProvider)
+                PublishingListener(nsdServicesStateProvider)
             }
         )
     }
@@ -35,7 +35,7 @@ class ServicePublisherImpl @Inject constructor(
     override fun removeService(serviceName: String) {
         nsdManager.unregisterService(
             registeredListeners.getOrPut(serviceName) {
-                PublishingListener(servicesStateProvider)
+                PublishingListener(nsdServicesStateProvider)
             })
     }
 

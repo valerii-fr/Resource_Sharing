@@ -2,27 +2,27 @@ package dev.nordix.publish.listeners
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
-import dev.nordix.service_manager.holder.ServicesStateProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import javax.inject.Inject
 
 class PublishingListener @Inject constructor(
-    private val servicesStateProvider: ServicesStateProvider,
+    private val nsdServicesStateProvider: NsdServicesStateProvider,
 ) : NsdManager.RegistrationListener {
 
     override fun onRegistrationFailed(
         serviceInfo: NsdServiceInfo?,
         errorCode: Int
-    ) = servicesStateProvider.onRegistrationFailed(serviceInfo, errorCode)
+    ) = nsdServicesStateProvider.onRegistrationFailed(serviceInfo, errorCode)
 
     override fun onUnregistrationFailed(
         serviceInfo: NsdServiceInfo?,
         errorCode: Int
-    ) = servicesStateProvider.onUnregistrationFailed(serviceInfo, errorCode)
+    ) = nsdServicesStateProvider.onUnregistrationFailed(serviceInfo, errorCode)
 
     override fun onServiceRegistered(serviceInfo: NsdServiceInfo?) =
-        servicesStateProvider.onServiceRegistered(serviceInfo)
+        nsdServicesStateProvider.onServiceRegistered(serviceInfo)
 
     override fun onServiceUnregistered(serviceInfo: NsdServiceInfo?) =
-        servicesStateProvider.onServiceUnregistered(serviceInfo)
+        nsdServicesStateProvider.onServiceUnregistered(serviceInfo)
 
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import dev.nordix.core.utils.getGenericTypesOf
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.model.actions.ServiceAction
-import dev.nordix.services.domain.model.results.ServiceActionResult
+import dev.nordix.services.domain.model.actions.ServiceActionResult
 import kotlin.reflect.KClass
 import kotlin.reflect.full.allSupertypes
 

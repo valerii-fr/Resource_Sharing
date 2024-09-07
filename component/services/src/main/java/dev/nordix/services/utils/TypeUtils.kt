@@ -2,7 +2,7 @@ package dev.nordix.services.utils
 
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.model.actions.ServiceAction
-import dev.nordix.services.domain.model.results.ServiceActionResult
+import dev.nordix.services.domain.model.actions.ServiceActionResult
 
 internal inline fun <reified S : NordixTcpService<*, *>> S.typify(
 ): NordixTcpService<ServiceAction<ServiceActionResult>, ServiceActionResult> {

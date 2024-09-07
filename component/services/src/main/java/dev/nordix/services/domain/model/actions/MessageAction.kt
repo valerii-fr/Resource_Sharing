@@ -1,6 +1,5 @@
 package dev.nordix.services.domain.model.actions
 
-import dev.nordix.services.domain.model.results.MessageActionResult
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,4 +13,5 @@ sealed interface MessageAction <R: MessageActionResult> : ServiceAction<R> {
 
     @Serializable
     data object GetMessages : MessageAction<MessageActionResult.GetResult>
+
 }

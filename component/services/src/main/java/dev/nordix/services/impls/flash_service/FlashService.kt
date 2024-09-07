@@ -11,7 +11,7 @@ import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.model.ServiceContract
 import dev.nordix.services.domain.model.ServiceDescriptor
 import dev.nordix.services.domain.model.actions.FlashAction
-import dev.nordix.services.domain.model.results.FlashActionResult
+import dev.nordix.services.domain.model.actions.FlashActionResult
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 

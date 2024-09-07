@@ -1,6 +1,5 @@
 package dev.nordix.services.domain.model.actions
 
-import dev.nordix.services.domain.model.results.FlashActionResult
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -15,7 +15,7 @@ import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class ServicesStateProvider(
+class NsdServicesStateProvider(
     val holder: MutableStateFlow<ServicesStateHolder> = MutableStateFlow(ServicesStateHolder()),
     private val terminalRepository: TerminalRepository,
 ) : MutableStateFlow<ServicesStateHolder> by holder {

@@ -6,9 +6,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.nordix.discovery.domain.DiscoveryService
-import dev.nordix.discovery.listeners.DiscoveryListener
 import dev.nordix.discovery.service.DiscoveryServiceImpl
-import dev.nordix.service_manager.holder.ServicesStateProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
+import dev.nordix.client_provider.domain.WssClientProvider
+import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
@@ -21,11 +22,15 @@ internal class DiscoveryModule {
     fun provideDiscoveryService(
         scope: CoroutineScope,
         nsdManager: NsdManager,
-        servicesStateProvider: ServicesStateProvider,
+        nsdServicesStateProvider: NsdServicesStateProvider,
+        wssClientProvider: WssClientProvider,
+        terminalRepository: TerminalRepository,
     ) : DiscoveryService = DiscoveryServiceImpl(
         scope = scope,
         nsdManager = nsdManager,
-        servicesStateProvider = servicesStateProvider,
+        nsdServicesStateProvider = nsdServicesStateProvider,
+        wssClientProvider = wssClientProvider,
+        terminalRepository = terminalRepository,
     )
 
 }

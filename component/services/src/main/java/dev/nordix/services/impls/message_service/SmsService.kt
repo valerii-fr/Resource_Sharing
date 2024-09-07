@@ -7,7 +7,7 @@ import dev.nordix.services.domain.model.ServiceDescriptor
 import dev.nordix.services.impls.message_service.accessors.SmsRetrieveAccessor
 import dev.nordix.services.impls.message_service.accessors.SmsSendAccessor
 import dev.nordix.services.domain.model.actions.MessageAction
-import dev.nordix.services.domain.model.results.MessageActionResult
+import dev.nordix.services.domain.model.actions.MessageActionResult
 import dev.nordix.settings.TerminalRepository
 import javax.inject.Inject
 

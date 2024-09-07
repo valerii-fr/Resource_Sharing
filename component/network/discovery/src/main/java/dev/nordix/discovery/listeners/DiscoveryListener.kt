@@ -2,34 +2,47 @@ package dev.nordix.discovery.listeners
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
-import dev.nordix.service_manager.domain.model.ServicesStateHolder
-import dev.nordix.service_manager.holder.ServicesStateProvider
-import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
+import dev.nordix.client_provider.domain.WssClientProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
+import dev.nordix.settings.TerminalRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class DiscoveryListener @Inject constructor(
-    private val servicesStateProvider: ServicesStateProvider,
+class DiscoveryListener(
+    private val nsdServicesStateProvider: NsdServicesStateProvider,
     private val nsdManager: NsdManager,
+    private val wssClientProvider: WssClientProvider,
+    private val scope: CoroutineScope,
+    private val terminalRepository: TerminalRepository,
 ) : NsdManager.DiscoveryListener {
 
     override fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) =
-        servicesStateProvider.onStartDiscoveryFailed(serviceType, errorCode)
+        nsdServicesStateProvider.onStartDiscoveryFailed(serviceType, errorCode)
 
     override fun onStopDiscoveryFailed(serviceType: String?, errorCode: Int) =
-        servicesStateProvider.onStopDiscoveryFailed(serviceType, errorCode)
+        nsdServicesStateProvider.onStopDiscoveryFailed(serviceType, errorCode)
 
     override fun onDiscoveryStarted(serviceType: String?) =
-        servicesStateProvider.onDiscoveryStarted(serviceType)
+        nsdServicesStateProvider.onDiscoveryStarted(serviceType)
 
     override fun onDiscoveryStopped(serviceType: String?) =
-        servicesStateProvider.onDiscoveryStopped(serviceType)
+        nsdServicesStateProvider.onDiscoveryStopped(serviceType)
 
     override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
-        servicesStateProvider.onServiceFound(serviceInfo)
-        nsdManager.resolveService(serviceInfo, ResolveListener(servicesStateProvider))
+        nsdServicesStateProvider.onServiceFound(serviceInfo)
+        nsdManager.resolveService(serviceInfo, ResolveListener(
+            nsdServicesStateProvider = nsdServicesStateProvider,
+            wssClientProvider = wssClientProvider,
+            scope = scope,
+            terminalRepository = terminalRepository,
+        ))
     }
 
-    override fun onServiceLost(serviceInfo: NsdServiceInfo?) =
-        servicesStateProvider.onServiceLost(serviceInfo)
+    override fun onServiceLost(serviceInfo: NsdServiceInfo?) {
+        nsdServicesStateProvider.onServiceLost(serviceInfo)
+        scope.launch {
+            wssClientProvider.terminateClient(serviceInfo?.host?.hostAddress ?: "")
+        }
+    }
 
 }

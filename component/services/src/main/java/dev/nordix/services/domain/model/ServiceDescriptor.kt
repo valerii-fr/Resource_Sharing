@@ -13,11 +13,7 @@ data class ServiceDescriptor(
     val port: Int,
     val id: ID = ID.new(),
     val contract: ServiceContract,
-    val services: List<ServiceDescriptor> = emptyList(),
 ) {
-
-    val netId get() = "${owner.value}:${name}/${id.value}"
-    val typeName get() = contract.type.typeName
 
     @Serializable
     @JvmInline

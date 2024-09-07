@@ -44,16 +44,16 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":component:common"))
     implementation(project(":component:services"))
+    implementation(project(":component:settings"))
 
     implementation(libs.bundles.ktor)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinReflect)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)
-    implementation(project(":component:settings"))
     ksp(libs.hilt.compiler)
-    implementation(kotlin("reflect"))
 }
