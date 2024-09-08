@@ -11,17 +11,22 @@ import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 class ResolveListener(
     private val nsdServicesStateProvider: NsdServicesStateProvider,
     private val wssClientProvider: WssClientProvider,
     private val scope: CoroutineScope,
     private val terminalRepository: TerminalRepository,
+    private val onFinished : () -> Unit,
 ) : NsdManager.ResolveListener {
 
     override fun onResolveFailed(
         serviceInfo: NsdServiceInfo?,
         errorCode: Int
-    ) = nsdServicesStateProvider.onResolveFailed(serviceInfo, errorCode)
+    ) {
+        nsdServicesStateProvider.onResolveFailed(serviceInfo, errorCode)
+        onFinished()
+    }
 
     override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
         nsdServicesStateProvider.onServiceResolved(serviceInfo)
@@ -39,6 +44,7 @@ class ResolveListener(
                 )
             }
         }
+        onFinished()
     }
 
 }

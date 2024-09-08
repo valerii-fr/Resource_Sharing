@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 
+@Suppress("DEPRECATION")
 class DiscoveryListener(
     private val nsdServicesStateProvider: NsdServicesStateProvider,
     private val nsdManager: NsdManager,
@@ -36,15 +37,15 @@ class DiscoveryListener(
     override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
         if (serviceInfo?.terminalId != terminalRepository.terminal.id.value.toString()) {
             scope.launch {
-                semaphore.withPermit {
-                    nsdServicesStateProvider.onServiceFound(serviceInfo)
-                    nsdManager.resolveService(serviceInfo, ResolveListener(
-                        nsdServicesStateProvider = nsdServicesStateProvider,
-                        wssClientProvider = wssClientProvider,
-                        scope = scope,
-                        terminalRepository = terminalRepository,
-                    ))
-                }
+                semaphore.acquire()
+                nsdServicesStateProvider.onServiceFound(serviceInfo)
+                nsdManager.resolveService(serviceInfo, ResolveListener(
+                    nsdServicesStateProvider = nsdServicesStateProvider,
+                    wssClientProvider = wssClientProvider,
+                    scope = scope,
+                    terminalRepository = terminalRepository,
+                    onFinished = { semaphore.release() }
+                ))
             }
         }
     }
