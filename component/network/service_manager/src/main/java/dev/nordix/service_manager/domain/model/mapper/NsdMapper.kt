@@ -8,15 +8,14 @@ import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
 
 fun NsdServiceInfo.toFoundServiceInfo() : FoundServiceInfo =
     FoundServiceInfo(
-        name = serviceName.substringAfter("/"),
+        name = serviceName,
         type = serviceType,
-        deviceId = serviceName.substringBefore("/")
     )
 
 
 fun NsdServiceInfo.toServiceInfo() : ResolvedServiceInfo =
     ResolvedServiceInfo(
-        name = serviceName?.substringAfter("/") ?: (Constants.ROOT_SERVICE_NAME + "nulled"),
+        name = serviceName,
         type = serviceType ?: (Constants.ROOT_SERVICE_TYPE + "nulled"),
         deviceId = serviceName.substringBefore("/"),
         port = port,
@@ -25,7 +24,7 @@ fun NsdServiceInfo.toServiceInfo() : ResolvedServiceInfo =
 
 fun NsdServiceInfo.toLocalServiceInfo() : LocalServiceInfo =
     LocalServiceInfo(
-        name = serviceName?.substringAfter("/") ?: (Constants.ROOT_SERVICE_NAME + "nulled"),
+        name = serviceName,
         type = serviceType ?: (Constants.ROOT_SERVICE_TYPE + "nulled"),
         port = port,
     )

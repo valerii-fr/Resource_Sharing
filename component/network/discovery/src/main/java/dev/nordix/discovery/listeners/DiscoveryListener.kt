@@ -9,7 +9,9 @@ import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.withPermit
 
 class DiscoveryListener(
     private val nsdServicesStateProvider: NsdServicesStateProvider,
@@ -19,7 +21,7 @@ class DiscoveryListener(
     private val terminalRepository: TerminalRepository,
 ) : NsdManager.DiscoveryListener {
 
-    val mutex = Mutex()
+    val semaphore = Semaphore(1)
 
     override fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) =
         nsdServicesStateProvider.onStartDiscoveryFailed(serviceType, errorCode)
@@ -36,7 +38,7 @@ class DiscoveryListener(
     override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
         if (serviceInfo?.terminalId != terminalRepository.terminal.id.value.toString()) {
             scope.launch {
-                mutex.withLock {
+                semaphore.withPermit {
                     nsdServicesStateProvider.onServiceFound(serviceInfo)
                     nsdManager.resolveService(serviceInfo, ResolveListener(
                         nsdServicesStateProvider = nsdServicesStateProvider,
@@ -51,7 +53,7 @@ class DiscoveryListener(
 
     override fun onServiceLost(serviceInfo: NsdServiceInfo?) {
         scope.launch {
-            mutex.withLock {
+            semaphore.withPermit {
                 nsdServicesStateProvider.onServiceLost(serviceInfo)
                 wssClientProvider.terminateClient(serviceInfo?.host?.hostAddress ?: "")
             }
