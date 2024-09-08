@@ -1,23 +1,21 @@
 [versions]
 agp = "8.4.2"
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxSerializationJson = "1.5.1"
-lifecycleRuntimeKtx = "2.8.4"
-activityCompose = "1.9.1"
-composeBom = "2024.08.00"
+lifecycleRuntimeKtx = "2.8.5"
+activityCompose = "1.9.2"
+composeBom = "2024.09.00"
 hilt = "2.51"
 hilt_navigation = "1.2.0"
-ksp = "2.0.10-1.0.24"
+ksp = "2.0.20-1.0.24"
 multidex = "2.0.1"
 permissions = "0.35.2-beta"
 appcompat = "1.7.0"
-material = "1.12.0"
 ktor = "2.3.12"
-materialVersion = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,7 +35,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
-coreLibraryDesugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.1" }
+coreLibraryDesugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.2" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
@@ -63,7 +61,6 @@ ktor-client-logging = {  group ="io.ktor", name = "ktor-client-logging", version
 
 #reflect
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -14,9 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,7 +32,7 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
 ) {
     val tabs = remember { NordixTab.tabs }
-    var selectedTabIndex by remember { mutableStateOf(tabs.indexOf(NordixTab.ResolvedServices)) }
+    var selectedTabIndex by remember { mutableIntStateOf(tabs.indexOf(NordixTab.ResolvedServices)) }
 
     val servicesState by viewModel.serviceStates.collectAsState()
     val selectedServices by viewModel.selectedServices.collectAsState()

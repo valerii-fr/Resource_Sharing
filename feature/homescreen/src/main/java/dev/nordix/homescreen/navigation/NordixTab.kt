@@ -1,12 +1,11 @@
 package dev.nordix.homescreen.navigation
 
-import dev.nordix.common_ui.R
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
+import dev.nordix.common_ui.R
 
 sealed interface NordixTab {
 

@@ -1,7 +1,6 @@
 package dev.nordix.services.impls.presentation_service
 
 import dev.nordix.core.Constants.ROOT_SERVICE_PORT
-import dev.nordix.services.NordixTcpService
 import dev.nordix.services.NordixTcpService.PresentationService
 import dev.nordix.services.domain.model.ServiceContract
 import dev.nordix.services.domain.model.ServiceDescriptor

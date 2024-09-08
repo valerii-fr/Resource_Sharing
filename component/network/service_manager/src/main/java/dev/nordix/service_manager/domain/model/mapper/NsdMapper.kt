@@ -29,10 +29,4 @@ fun NsdServiceInfo.toLocalServiceInfo() : LocalServiceInfo =
         port = port,
     )
 
-fun ResolvedServiceInfo.toNsdService() : NsdServiceInfo = NsdServiceInfo().apply {
-    port = this@toNsdService.port
-    serviceName = "$deviceId/$name"
-    serviceType = type
-}
-
 val NsdServiceInfo.terminalId get() = this.serviceName.substringBefore("/")

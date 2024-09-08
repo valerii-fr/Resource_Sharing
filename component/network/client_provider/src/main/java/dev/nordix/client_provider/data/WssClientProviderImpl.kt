@@ -185,7 +185,7 @@ class WssClientProviderImpl @Inject constructor(
                             )
                         )
                     } else {
-                        Log.w(TAG, "Received presentation from unknown terminal: ${terminalId}")
+                        Log.w(TAG, "Received presentation from unknown terminal: $terminalId")
                     }
                 }
             )

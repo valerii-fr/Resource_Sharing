@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Resource Sharing</string>
-    <string name="my_services">My</string>
     <string name="found_services">Found</string>
     <string name="resolved_services">Resolved</string>
     <string name="action_disconnect">Disconnect</string>
     <string name="action_forget">Forget</string>
     <string name="action_connect">Connect</string>
-    <string name="send_message">Send</string>
-    <string name="get_messages">Get all</string>
-    <string name="message_actions">Message actions</string>
-    <string name="switch_on">Switch on</string>
-    <string name="switch_off">Switch off</string>
-    <string name="flash_actions">Flash actions</string>
 </resources>

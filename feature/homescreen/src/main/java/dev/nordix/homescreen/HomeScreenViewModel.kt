@@ -6,12 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.nordix.client_provider.domain.WssClientProvider
 import dev.nordix.client_provider.domain.model.ClientTarget
-import dev.nordix.homescreen.composable.UiServiceAction
 import dev.nordix.homescreen.model.ServiceActionsWrapper
-import dev.nordix.service_manager.domain.model.ServiceInfo
 import dev.nordix.service_manager.domain.model.ServiceState
 import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
-import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceState
 import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.model.actions.ServiceAction
@@ -32,15 +29,6 @@ class HomeScreenViewModel @Inject constructor(
     val serviceStates = nsdServicesStateProvider.holder.asStateFlow()
     val selectedServices : StateFlow<ServiceActionsWrapper?>
         field = MutableStateFlow(null)
-
-    fun acceptAction(action: UiServiceAction) {
-        Log.i("HomeScreenViewModel", "acceptAction: $action")
-        when (action) {
-            UiServiceAction.Connect -> {}
-            UiServiceAction.Disconnect -> {}
-            UiServiceAction.Forget -> {}
-        }
-    }
 
     fun acceptAction(action: ServiceAction<*>) {
         Log.i("HomeScreenViewModel", "acceptAction: $action")

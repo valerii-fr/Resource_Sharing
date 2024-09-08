@@ -41,7 +41,7 @@ class WssServerProviderImpl @javax.inject.Inject constructor(
 ) : WssServerProvider {
 
     override fun getServer(): NettyApplicationEngine {
-        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE)
         val environment = applicationEngineEnvironment {
             connector {
                 port = ROOT_SERVICE_PORT

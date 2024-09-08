@@ -8,9 +8,7 @@ import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.settings.TerminalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 
 class DiscoveryListener(
