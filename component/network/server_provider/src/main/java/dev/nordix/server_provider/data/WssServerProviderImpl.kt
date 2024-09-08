@@ -4,6 +4,7 @@ import android.util.Log
 import dev.nordix.core.Constants.ROOT_SERVICE_PORT
 import dev.nordix.core.Constants.ROOT_WS_PATH
 import dev.nordix.server_provider.domain.WssServerProvider
+import dev.nordix.service_manager.holder.NsdServicesStateProvider
 import dev.nordix.services.NordixTcpService
 import dev.nordix.services.domain.ActionSerializer.serviceInteractionJson
 import dev.nordix.services.domain.model.actions.ServiceAction
@@ -38,6 +39,7 @@ import kotlin.reflect.full.superclasses
 class WssServerProviderImpl @javax.inject.Inject constructor(
     private val services: Set<@JvmSuppressWildcards NordixTcpService<*, *>>,
     private val terminalRepository: TerminalRepository,
+    private val serviceStateProvider: NsdServicesStateProvider,
 ) : WssServerProvider {
 
     override fun getServer(): NettyApplicationEngine {
@@ -70,6 +72,7 @@ class WssServerProviderImpl @javax.inject.Inject constructor(
         val servicesPresentation = ServerPresentation(
             terminalId = terminalRepository.terminal.id.value,
             timestamp = Instant.now(),
+            knownDevices = serviceStateProvider.value.resolvedServiceStates.map { it.serviceInfo.deviceId },
             serviceAliases = services.mapNotNull { it::class.superclasses.first().qualifiedName }
         )
         send(Frame.Text(

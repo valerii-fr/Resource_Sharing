@@ -6,9 +6,6 @@ import dev.nordix.services.domain.model.actions.MessageAction.SendMessage
 import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.actions.MessageActionResult
 import dev.nordix.services.domain.model.actions.ServiceInteraction
-import dev.nordix.services.domain.model.actions.ServicesPresentationAction
-import dev.nordix.services.domain.model.actions.ServicesPresentationAction.ClientPresentation
-import dev.nordix.services.domain.model.actions.ServicesPresentationAction.ServerPresentation
 import dev.nordix.services.domain.model.actions.ServicesPresentationResult
 import dev.nordix.services.domain.model.actions.ServicesPresentationResult.ClientPresentationResult
 import dev.nordix.services.domain.model.actions.ServicesPresentationResult.ServerPresentationResult
@@ -24,10 +21,6 @@ object ActionSerializer {
             polymorphic(ServiceAction::class) {
                 subclass(SendMessage::class, SendMessage.serializer())
                 subclass(GetMessages::class, GetMessages.serializer())
-                polymorphic(ServicesPresentationAction::class) {
-                    subclass(ServerPresentation::class, ServerPresentation.serializer())
-                    subclass(ClientPresentation::class, ClientPresentation.serializer())
-                }
             }
 
             polymorphic(ServiceActionResult::class) {

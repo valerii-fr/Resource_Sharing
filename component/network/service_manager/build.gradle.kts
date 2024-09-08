@@ -43,7 +43,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":component:services"))
+    implementation(project(":component:services:core"))
     implementation(project(":component:common"))
 
     implementation(libs.androidx.core.ktx)

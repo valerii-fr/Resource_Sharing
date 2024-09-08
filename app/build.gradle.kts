@@ -78,8 +78,10 @@ dependencies {
     implementation(project(":component:common"))
     implementation(project(":component:network:discovery"))
     implementation(project(":component:network:publish"))
+    implementation(project(":component:network:server_provider"))
     implementation(project(":component:network:service_manager"))
-    implementation(project(":component:services"))
+    implementation(project(":component:services:core"))
+    implementation(project(":component:services:presentation"))
     implementation(project(":component:settings"))
 
     implementation(project(":feature:network_map"))
@@ -101,7 +103,6 @@ dependencies {
     implementation(libs.composeAnnotation)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.espresso.core)
-    implementation(project(":component:network:server_provider"))
 
     ksp(libs.hilt.compiler)
     ksp(libs.composeAnnotationProcessor)

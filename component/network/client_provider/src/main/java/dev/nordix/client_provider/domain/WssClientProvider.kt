@@ -10,6 +10,8 @@ interface WssClientProvider {
 
     suspend fun postInteraction(target: ClientTarget, action: ServiceInteraction)
 
+    suspend fun broadcastInteraction(action: ServiceInteraction)
+
     suspend fun launchClient(target: ClientTarget)
 
     suspend fun terminateClient(host: String)

@@ -33,6 +33,7 @@ class ResolveListener(
         scope.launch {
             val target = ClientTarget(
                 host = serviceInfo?.host?.hostAddress ?: "",
+                serviceName = serviceInfo?.serviceName ?: "",
             )
             if (serviceInfo?.toServiceInfo()?.deviceId != terminalRepository.terminal.id.value) {
                 Log.i("ResolveListener", "onServiceResolved: launching client for $target")
@@ -40,6 +41,7 @@ class ResolveListener(
                     ClientTarget(
                         host = serviceInfo?.host?.hostAddress ?: "",
                         port = serviceInfo?.port ?: 0,
+                        serviceName = serviceInfo?.serviceName ?: "",
                     )
                 )
             }

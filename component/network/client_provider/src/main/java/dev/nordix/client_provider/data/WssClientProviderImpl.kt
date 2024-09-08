@@ -10,6 +10,7 @@ import dev.nordix.services.domain.ActionSerializer.serviceInteractionJson
 import dev.nordix.services.domain.model.actions.ServiceAction
 import dev.nordix.services.domain.model.actions.ServiceActionResult
 import dev.nordix.services.domain.model.actions.ServiceInteraction
+import dev.nordix.services.domain.model.actions.ServicesPresentationAction
 import dev.nordix.services.domain.model.actions.ServicesPresentationAction.ClientPresentation
 import dev.nordix.services.domain.model.actions.ServicesPresentationAction.ServerPresentation
 import dev.nordix.settings.TerminalRepository
@@ -21,14 +22,24 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readReason
 import io.ktor.websocket.readText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import kotlin.reflect.full.superclasses
 
 class WssClientProviderImpl @Inject constructor(
+    scope: CoroutineScope,
     private val httpClient: HttpClient,
     private val terminalRepository: TerminalRepository,
     private val serviceRepository: ServiceRepository,
@@ -36,12 +47,29 @@ class WssClientProviderImpl @Inject constructor(
 ) : WssClientProvider {
 
     private val services = serviceRepository.observeServices()
+    private val activeSessions: MutableMap<ClientTarget, DefaultClientWebSocketSession> = mutableMapOf()
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    private val resolvedServices = serviceStateProvider.debounce(1000L).mapLatest {
+        it.resolvedServiceStates
+    }
 
     override val activeClients: StateFlow<List<ClientTarget>>
         field = MutableStateFlow(emptyList())
 
-    private val activeSessions: MutableMap<ClientTarget, DefaultClientWebSocketSession> = mutableMapOf()
-
+    init {
+        resolvedServices.onEach { resolvedServices ->
+            broadcastInteraction(ClientPresentation(
+                terminalId = terminalRepository.terminal.id.value,
+                name = terminalRepository.terminal.name,
+                knownDevices = resolvedServices.map { it.serviceInfo.deviceId },
+                serviceAliases = services.first().mapNotNull { it::class.superclasses.first().qualifiedName },
+                presentationType = ServicesPresentationAction.PresentationType.PRESENTATION_UPDATE
+            ))
+        }
+            .flowOn(Dispatchers.IO)
+            .launchIn(scope)
+    }
 
     override suspend fun launchClient(
         target: ClientTarget
@@ -92,10 +120,23 @@ class WssClientProviderImpl @Inject constructor(
         ))
     }
 
+    override suspend fun broadcastInteraction(action: ServiceInteraction) {
+        activeSessions.forEach { session ->
+            session.value.send(Frame.Text(
+                serviceInteractionJson.encodeToString<ServiceInteraction>(
+                    ServiceInteraction.serializer(),
+                    action
+                )
+            ))
+            Log.d(TAG, "broadcastInteraction: $action to ${session.key}")
+        }
+    }
+
     private suspend fun DefaultClientWebSocketSession.selfPresent() {
         val clientPresentation = ClientPresentation(
             terminalId = terminalRepository.terminal.id.value,
             name = terminalRepository.terminal.name,
+            knownDevices = serviceStateProvider.value.resolvedServiceStates.map { it.serviceInfo.deviceId },
             serviceAliases = services.first().mapNotNull { it::class.superclasses.first().qualifiedName }
         )
         send(Frame.Text(
@@ -181,7 +222,8 @@ class WssClientProviderImpl @Inject constructor(
                         this[tI] = targetValue.copy(
                             status = ServiceStatus.Connected,
                             serviceInfo = targetValue.serviceInfo.copy(
-                                serviceAliases = serviceAliases
+                                serviceAliases = serviceAliases,
+                                knownDevices = knownDevices
                             )
                         )
                     } else {

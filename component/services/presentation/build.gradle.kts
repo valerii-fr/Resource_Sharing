@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.android.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "dev.nordix.discovery"
+    namespace = "dev.nordix.presentation"
     compileSdk = 34
 
     defaultConfig {
@@ -26,6 +27,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -33,24 +35,24 @@ android {
 }
 
 kotlin {
-    //...
     sourceSets.all {
         languageSettings.enableLanguageFeature("ExplicitBackingFields")
     }
-    //...
 }
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":component:services:core"))
     implementation(project(":component:common"))
-    implementation(project(":component:network:client_provider"))
-    implementation(project(":component:settings"))
+    implementation(project(":component:services:core"))
     implementation(project(":component:network:service_manager"))
 
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)
+    implementation(project(":component:settings"))
     ksp(libs.hilt.compiler)
+    implementation(kotlin("reflect"))
 }

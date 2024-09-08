@@ -16,6 +16,7 @@ multidex = "2.0.1"
 permissions = "0.35.2-beta"
 appcompat = "1.7.0"
 ktor = "2.3.12"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -61,6 +62,7 @@ ktor-client-logging = {  group ="io.ktor", name = "ktor-client-logging", version
 
 #reflect
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

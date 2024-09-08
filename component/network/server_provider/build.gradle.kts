@@ -43,8 +43,9 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":component:common"))
-    implementation(project(":component:services"))
+    implementation(project(":component:services:core"))
     implementation(project(":component:settings"))
+    implementation(project(":component:network:service_manager"))
 
     implementation(libs.bundles.ktor)
 

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.nordix.serviceы"
+    namespace = "dev.nordix.services.core"
     compileSdk = 34
 
     defaultConfig {
@@ -43,14 +43,14 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":component:common"))
+    implementation(project(":component:settings"))
 
+    implementation(libs.kotlinReflect)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
 
     implementation(libs.hilt.android)
-    implementation(project(":component:settings"))
     ksp(libs.hilt.compiler)
-    implementation(kotlin("reflect"))
 }

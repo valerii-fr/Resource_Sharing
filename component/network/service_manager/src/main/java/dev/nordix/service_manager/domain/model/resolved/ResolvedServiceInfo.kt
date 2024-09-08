@@ -10,4 +10,5 @@ data class ResolvedServiceInfo(
     val deviceId: String,
     val address: InetAddress?,
     val serviceAliases: List<String> = emptyList(),
+    val knownDevices: List<String> = emptyList(),
 ) : ServiceInfo

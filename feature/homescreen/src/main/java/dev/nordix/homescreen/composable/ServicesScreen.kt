@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import dev.nordix.homescreen.model.ServiceActionsWrapper
+import dev.nordix.service_manager.domain.model.resolved.ResolvedServiceInfo
 import dev.nordix.services.domain.model.ActionsWrapper
 import dev.nordix.services.domain.model.actions.ServiceAction
 import kotlin.reflect.KClass
@@ -44,6 +45,7 @@ fun ServicesScreen(
             key = { it.rootAction.simpleName.toString() }
         ) { item ->
             ActionBlock(
+                serviceInfo = services.serviceInfo,
                 actionsWrapper = item,
                 onAction = onAction
             )
@@ -53,6 +55,7 @@ fun ServicesScreen(
 
 @Composable
 private fun ActionBlock(
+    serviceInfo: ResolvedServiceInfo,
     actionsWrapper: ActionsWrapper,
     onAction: (ServiceAction<*>) -> Unit,
 ) {
@@ -63,6 +66,12 @@ private fun ActionBlock(
             text = actionsWrapper.rootAction.simpleName.toString(),
             style = MaterialTheme.typography.labelLarge
         )
+        serviceInfo.knownDevices.forEach {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
         Card(
             modifier = Modifier.fillMaxWidth().padding(4.dp),
             colors = CardDefaults.cardColors(

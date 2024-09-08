@@ -35,7 +35,7 @@ fun HomeScreen(
     var selectedTabIndex by remember { mutableIntStateOf(tabs.indexOf(NordixTab.ResolvedServices)) }
 
     val servicesState by viewModel.serviceStates.collectAsState()
-    val selectedServices by viewModel.selectedServices.collectAsState()
+    val selectedServices by viewModel.selectedService.collectAsState()
 
     val selectedList = remember(selectedTabIndex, servicesState) {
         when (tabs[selectedTabIndex]) {

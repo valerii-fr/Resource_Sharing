@@ -20,6 +20,8 @@
             <option value="$PROJECT_DIR$/component/network/server_provider" />
             <option value="$PROJECT_DIR$/component/network/service_manager" />
             <option value="$PROJECT_DIR$/component/services" />
+            <option value="$PROJECT_DIR$/component/services/core" />
+            <option value="$PROJECT_DIR$/component/services/presentation" />
             <option value="$PROJECT_DIR$/component/settings" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/feature" />

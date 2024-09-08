@@ -27,7 +27,7 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     val serviceStates = nsdServicesStateProvider.holder.asStateFlow()
-    val selectedServices : StateFlow<ServiceActionsWrapper?>
+    val selectedService : StateFlow<ServiceActionsWrapper?>
         field = MutableStateFlow(null)
 
     fun acceptAction(action: ServiceAction<*>) {
@@ -36,12 +36,13 @@ class HomeScreenViewModel @Inject constructor(
             serviceStates.value.resolvedServiceStates
                 .filter { it.status == ServiceState.ServiceStatus.Connected }
                 .find {
-                    it.serviceInfo.deviceId == selectedServices.value?.serviceInfo?.deviceId
+                    it.serviceInfo.deviceId == selectedService.value?.serviceInfo?.deviceId
                 }
                 ?.let { service ->
                     wssClientProvider.postInteraction(
                         target = ClientTarget(
                             host = service.serviceInfo.address?.hostAddress ?: "127.0.0.1",
+                            serviceName = service.serviceInfo.name
                         ),
                         action = action
                     )
@@ -52,7 +53,7 @@ class HomeScreenViewModel @Inject constructor(
     fun openServices(serviceInfo: ResolvedServiceInfo) {
         Log.i("HomeScreenViewModel", "openServices: $serviceInfo")
         Log.i("HomeScreenViewModel", "resolvedServices: ${serviceStates.value.resolvedServiceStates}")
-        selectedServices.update { services ->
+        selectedService.update { services ->
             serviceStates.value.resolvedServiceStates.find {
                 it.serviceInfo.deviceId == serviceInfo.deviceId
             }?.let { service ->
@@ -69,7 +70,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun closeServices() {
-        selectedServices.update { null }
+        selectedService.update { null }
     }
 
 }

@@ -9,7 +9,6 @@ import dev.nordix.services.NordixTcpService
 import dev.nordix.services.ServiceRepository
 import dev.nordix.services.impls.flash_service.FlashServiceImpl
 import dev.nordix.services.impls.message_service.SmsServiceImpl
-import dev.nordix.services.impls.presentation_service.PresentationServiceImpl
 import dev.nordix.services.repository.ServiceRepositoryImpl
 import javax.inject.Singleton
 
@@ -34,12 +33,5 @@ class ServicesModule {
     @Singleton
     @IntoSet
     fun provideFlashService(flashService: FlashServiceImpl): NordixTcpService<*, *> = flashService
-
-    @Provides
-    @Singleton
-    @IntoSet
-    fun providePresentationService(
-        presentationService: PresentationServiceImpl
-    ): NordixTcpService<*, *> = presentationService
 
 }

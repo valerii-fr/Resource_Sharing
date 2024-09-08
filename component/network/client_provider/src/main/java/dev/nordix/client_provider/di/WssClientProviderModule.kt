@@ -12,6 +12,7 @@ import dev.nordix.settings.TerminalRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.WebSockets
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -29,12 +30,14 @@ class WssClientProviderModule {
         httpClient: HttpClient,
         serviceRepository: ServiceRepository,
         terminalRepository: TerminalRepository,
-        serviceStateProvider: NsdServicesStateProvider
+        serviceStateProvider: NsdServicesStateProvider,
+        scope: CoroutineScope,
     ) : WssClientProvider = WssClientProviderImpl(
         httpClient = httpClient,
         serviceRepository = serviceRepository,
         terminalRepository = terminalRepository,
-        serviceStateProvider = serviceStateProvider
+        serviceStateProvider = serviceStateProvider,
+        scope = scope,
     )
 
 }
