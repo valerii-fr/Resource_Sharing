@@ -26,12 +26,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -67,6 +70,24 @@ class WssClientProviderImpl @Inject constructor(
                 presentationType = ServicesPresentationAction.PresentationType.PRESENTATION_UPDATE
             ))
         }
+            .flowOn(Dispatchers.IO)
+            .launchIn(scope)
+
+        flow {
+            while (true) {
+                emit(Unit)
+                delay(5000L)
+            }
+        }
+            .onEach {
+                broadcastInteraction(ClientPresentation(
+                    terminalId = terminalRepository.terminal.id.value,
+                    name = terminalRepository.terminal.name,
+                    knownDevices = serviceStateProvider.value.resolvedServiceStates.map { it.serviceInfo.deviceId },
+                    serviceAliases = services.first().mapNotNull { it::class.superclasses.first().qualifiedName },
+                    presentationType = ServicesPresentationAction.PresentationType.PRESENTATION_UPDATE
+                ))
+            }
             .flowOn(Dispatchers.IO)
             .launchIn(scope)
     }
